@@ -22,15 +22,10 @@ export default async function AdminApartmentsPage() {
   }
 
   // Get all apartments with their details and listing counts
-  const { data: apartments } = await supabase
-    .from("profiles")
-    .select(`
-      *,
-      apartment_details(*),
-      clothing_listings(count)
-    `)
-    .eq("user_type", "apartment")
-    .order("created_at", { ascending: false })
+ const { data: apartments } = await supabase
+  .from("apartment_with_listing_counts")
+  .select("*")
+  .order("created_at", { ascending: false }) 
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
@@ -72,7 +67,7 @@ export default async function AdminApartmentsPage() {
                       </CardDescription>
                     </div>
                     <Badge variant="outline" className="text-xs">
-                      {apartment.clothing_listings?.[0]?.count || 0} listings
+                      {apartment.listing_count || 0} listings
                     </Badge>
                   </div>
                 </CardHeader>

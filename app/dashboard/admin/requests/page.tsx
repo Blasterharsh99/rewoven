@@ -22,11 +22,12 @@ export default async function AdminRequestsPage() {
   }
 
   // Get all requests with details
-const { data: requests, error: requestsError } = await supabase
-  .from("clothing_requests")
+const { data: requests } = await supabase
+  .from("clothing_request_with_details")
   .select("*")
+  .order("created_at", { ascending: false })
+
 console.log("Fetched Requests:", requests)
-console.log("Requests Error:", requestsError)
 
   const statusCounts = {
     pending: requests?.filter((r) => r.status === "pending").length || 0,
@@ -111,10 +112,10 @@ console.log("Requests Error:", requestsError)
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <CardTitle className="text-emerald-900 text-lg">
-                        {request.ngo_profiles?.name} → {request.apartment_profiles?.name}
+                        {request.ngo_contact_person} → {request.apartment_contact_person}
                       </CardTitle>
                       <CardDescription className="mt-1">
-                        Request for: {request.clothing_listings?.title}
+                        Request for: {request.listing_title}
                       </CardDescription>
                     </div>
                     <Badge
@@ -136,18 +137,18 @@ console.log("Requests Error:", requestsError)
                   <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                     <div>
                       <p className="text-emerald-700">
-                        <strong>NGO Contact:</strong> {request.ngo_profiles?.contact_person}
+                        <strong>NGO Contact:</strong> {request.ngo_contact_person}
                       </p>
                       <p className="text-emerald-600">
-                        {request.ngo_profiles?.city}, {request.ngo_profiles?.state}
+                        {request.ngo_city}, {request.ngo_state}
                       </p>
                     </div>
                     <div>
                       <p className="text-emerald-700">
-                        <strong>Apartment Contact:</strong> {request.apartment_profiles?.contact_person}
+                        <strong>Apartment Contact:</strong> {request.apartment_contact_person}
                       </p>
                       <p className="text-emerald-600">
-                        {request.apartment_profiles?.city}, {request.apartment_profiles?.state}
+                        {request.apartment_city}, {request.apartment_state}
                       </p>
                     </div>
                     <div>
@@ -155,7 +156,7 @@ console.log("Requests Error:", requestsError)
                         <Package className="h-3 w-3" />
                         <strong>Requested:</strong> {request.requested_quantity} items
                       </p>
-                      <p className="text-emerald-600">Type: {request.clothing_listings?.clothing_type}</p>
+                      <p className="text-emerald-600">Type: {request.listing_clothing_type}</p>
                     </div>
                     <div>
                       <p className="text-emerald-700 flex items-center gap-1">

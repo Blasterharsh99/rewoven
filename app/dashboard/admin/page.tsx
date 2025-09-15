@@ -55,15 +55,11 @@ export default async function AdminDashboardPage() {
     .limit(5)
 
   const { data: recentRequests } = await supabase
-    .from("clothing_requests")
-    .select(`
-      *,
-      clothing_listings!inner(title),
-      profiles!clothing_requests_ngo_id_fkey(name),
-      apartment_profiles:profiles!clothing_listings_apartment_id_fkey(name)
-    `)
-    .order("created_at", { ascending: false })
-    .limit(5)
+      .from("ngo_requests_with_name")
+    .select("*")
+    .limit(5);
+
+    console.log("Fetched Recent Requests for Admin:", recentRequests)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
@@ -75,7 +71,7 @@ export default async function AdminDashboardPage() {
             <h1 className="text-2xl font-bold text-emerald-900">Rewoven Admin</h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-emerald-700">Welcome, {profile.contact_person}</span>
+            <span className="text-sm text-emerald-700">Welcome, Admin</span>
             <form action="/auth/signout" method="post">
               <Button variant="outline" type="submit">
                 Sign Out
@@ -246,8 +242,8 @@ export default async function AdminDashboardPage() {
                   {recentRequests.map((request) => (
                     <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex-1">
-                        <h4 className="font-medium text-emerald-900">{request.profiles?.name}</h4>
-                        <p className="text-sm text-emerald-700">Requested "{request.clothing_listings?.title}"</p>
+                        <h4 className="font-medium text-emerald-900">{request.ngo_name}</h4>
+                        <p className="text-sm text-emerald-700">"{request.message}"</p>
                         <p className="text-xs text-emerald-600">
                           {request.requested_quantity} items • {new Date(request.created_at).toLocaleDateString()}
                         </p>
