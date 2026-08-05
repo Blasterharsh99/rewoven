@@ -123,7 +123,7 @@ export default function HomePage() {
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-emerald-900">3500+</div>
+                  <div className="text-2xl font-bold text-emerald-900">6300+</div>
                   <div className="text-xs text-emerald-600">Items</div>
                 </div>
               </div>
@@ -150,7 +150,7 @@ export default function HomePage() {
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-emerald-900">4+</div>
+                  <div className="text-2xl font-bold text-emerald-900">6</div>
                   <div className="text-xs text-emerald-600">Active</div>
                 </div>
               </div>
@@ -177,7 +177,7 @@ export default function HomePage() {
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-emerald-900">10+</div>
+                  <div className="text-2xl font-bold text-emerald-900">5</div>
                   <div className="text-xs text-emerald-600">Partners</div>
                 </div>
               </div>
@@ -312,11 +312,11 @@ export default function HomePage() {
             <div className="order-2 lg:order-1">
               <div className="relative">
                 <div className="absolute inset-0 bg-emerald-100 rounded-2xl transform rotate-3"></div>
-                  <img
-                    src="/peehu_photo.jpg"
-                    alt="Founder of Rewoven NGO"
-                    className="relative w-full h-150 object-cover rounded-2xl shadow-xl"
-                  />
+                <img
+                  src="/peehu_photo.jpg"
+                  alt="Founder of Rewoven NGO"
+                  className="relative w-full h-150 object-cover rounded-2xl shadow-xl"
+                />
                 <div className="absolute -bottom-4 -right-4 bg-emerald-600 text-white p-4 rounded-xl shadow-lg">
                   <Heart className="h-8 w-8" />
                 </div>
@@ -330,15 +330,15 @@ export default function HomePage() {
               <div className="space-y-6 text-emerald-700">
 
                 <p className="text-lg leading-relaxed">
-                  Suhani Agarwal is an 11 th grade student studying at NPS Koramangala, Bangalore. 
-                  She greatly enjoys exploring her interests, which include art, parliamentary debating, finance, and as importantly - her passion for sustainability.  
-                  As someone who grew up in a family that internalised service and giving, ReWoven has allowed Suhani’s vision to come to life. 
+                  Suhani Agarwal is an 12 th grade student studying at NPS Koramangala, Bangalore.
+                  She greatly enjoys exploring her interests, which include art, parliamentary debating, finance, and as importantly - her passion for sustainability.
+                  As someone who grew up in a family that internalised service and giving, ReWoven has allowed Suhani’s vision to come to life.
                   Empathetic, ambitious and hard working, Suhani aims to broaden ReWoven's outreach and hopes to establish tangible change.
                 </p>
 
                 <p className="leading-relaxed">
-                  ReWoven stands for a world where clothing is not a privilege but a shared right. 
-                  By embodying a circular system where long forgotten clothes are given a new life in the hands of the underprivileged, ReWoven aims at bridging the gap. 
+                  ReWoven stands for a world where clothing is not a privilege but a shared right.
+                  By embodying a circular system where long forgotten clothes are given a new life in the hands of the underprivileged, ReWoven aims at bridging the gap.
                 </p>
 
                 <div className="bg-emerald-50 p-6 rounded-xl border-l-4 border-emerald-600">
@@ -368,10 +368,58 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Our Partners Section */}
+      <section className="container mx-auto px-4 py-16 bg-white/40 backdrop-blur-sm border-t border-emerald-100">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h3 className="text-3xl font-bold text-emerald-900 mb-4">Our Partners</h3>
+            <p className="text-emerald-700 text-lg">Thank you to the organizations and communities making this possible</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Partner Apartments */}
+            <div className="bg-white/80 rounded-2xl p-8 shadow-sm border border-emerald-50">
+              <div className="flex items-center gap-3 mb-6">
+                <Building2 className="h-8 w-8 text-emerald-600" />
+                <h4 className="text-2xl font-semibold text-emerald-900">Partner Apartments</h4>
+              </div>
+              <ul className="space-y-3 text-emerald-800">
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Mantri Espana</li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Adarsh Palm Retreat Bellandur</li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Shobha Jasmine Bellandur</li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Purva Fountain Square Marathalli</li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Mantri Classic Apartments Koramangala</li>
+              </ul>
+            </div>
+
+            {/* Partner NGOs */}
+            <div className="bg-white/80 rounded-2xl p-8 shadow-sm border border-emerald-50">
+              <div className="flex items-center gap-3 mb-6">
+                <Users className="h-8 w-8 text-emerald-600" />
+                <h4 className="text-2xl font-semibold text-emerald-900">Partner NGOs</h4>
+              </div>
+              <ul className="space-y-3 text-emerald-800">
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Goonj</li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Samarthanam Trust for the Disabled, HSR Layout</li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Gerizim Rehabilitation Trust, Ejipura</li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Indro Foundation, Ejipura</li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Cheshire Homes India Bangalore Unit, HAL Old Airport Road</li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Karunashraya, Kundalahalli, Marathahalli</li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Swanthana, Carmalaram post, Sarjapur</li>
+                <li className="flex items-start gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-2 shrink-0"></div>Primary Govt Schools in Bellandur</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
-      <footer className="border-t bg-white/80 backdrop-blur-sm mt-16">
+      <footer className="border-t bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-8 text-center text-emerald-700">
           <p>&copy; 2025 Rewoven NGO. Making a difference, one donation at a time.</p>
+          <p className="mt-2">
+            Contact us: <a href="mailto:rewoven.in@gmail.com" className="hover:text-emerald-900 font-medium transition-colors">rewoven.in@gmail.com</a>
+          </p>
         </div>
       </footer>
     </div>
