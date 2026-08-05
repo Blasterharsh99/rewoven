@@ -1,26 +1,22 @@
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import {
+  getFullProfile,
+  updateProfile,
+  upsertApartmentDetails,
+  upsertNgoDetails,
+  getProfileById,
+} from "@/lib/db/queries"
 import { type NextRequest, NextResponse } from "next/server"
 
 export async function GET() {
-  const supabase = await createClient()
-
   try {
-    const { data: user } = await supabase.auth.getUser()
-    if (!user.user) {
+    const session = await getSession()
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized", success: false }, { status: 401 })
     }
 
-    const { data: profile, error } = await supabase
-      .from("profiles")
-      .select(`
-        *,
-        apartment_details(*),
-        ngo_details(*)
-      `)
-      .eq("id", user.user.id)
-      .single()
-
-    if (error) throw error
+    const profile = await getFullProfile(session.userId)
+    if (!profile) throw new Error("Profile not found")
 
     return NextResponse.json({ data: profile, success: true })
   } catch (error) {
@@ -29,11 +25,9 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
-  const supabase = await createClient()
-
   try {
-    const { data: user } = await supabase.auth.getUser()
-    if (!user.user) {
+    const session = await getSession()
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized", success: false }, { status: 401 })
     }
 
@@ -42,32 +36,23 @@ export async function PUT(request: NextRequest) {
 
     // Update main profile
     if (profile_data) {
-      const { error: profileError } = await supabase.from("profiles").update(profile_data).eq("id", user.user.id)
+      await updateProfile(session.userId, profile_data)
     }
 
     // Update user type specific details
     if (details_data) {
-      const { data: profile } = await supabase.from("profiles").select("user_type").eq("id", user.user.id).single()
+      const profile = await getProfileById(session.userId)
 
       if (profile?.user_type === "apartment") {
-        await supabase.from("apartment_details").upsert({ profile_id: user.user.id, ...details_data })
+        await upsertApartmentDetails({ profile_id: session.userId, ...details_data })
       } else if (profile?.user_type === "ngo") {
-        await supabase.from("ngo_details").upsert({ profile_id: user.user.id, ...details_data })
+        await upsertNgoDetails({ profile_id: session.userId, ...details_data })
       }
     }
 
     // Fetch updated profile
-    const { data: updatedProfile, error } = await supabase
-      .from("profiles")
-      .select(`
-        *,
-        apartment_details(*),
-        ngo_details(*)
-      `)
-      .eq("id", user.user.id)
-      .single()
-
-    if (error) throw error
+    const updatedProfile = await getFullProfile(session.userId)
+    if (!updatedProfile) throw new Error("Profile not found after update")
 
     return NextResponse.json({ data: updatedProfile, success: true })
   } catch (error) {

@@ -1,40 +1,27 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getFullProfile } from "@/lib/db/queries"
+import { queryOne } from "@/lib/db"
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile to determine dashboard type
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getFullProfile(session.userId)
 
   if (!profile) {
-    // Profile not created yet, redirect to complete setup
     redirect("/auth/complete-profile")
   }
 
-  if (profile.user_type === "ngo") {
-    const { data: ngoDetails } = await supabase.from("ngo_details").select("*").eq("profile_id", data.user.id).single()
-
-    if (!ngoDetails) {
-      redirect("/auth/complete-profile")
-    }
+  if (profile.user_type === "ngo" && !profile.ngo_details) {
+    redirect("/auth/complete-profile")
   }
 
-  if (profile.user_type === "apartment") {
-    const { data: apartmentDetails } = await supabase
-      .from("apartment_details")
-      .select("*")
-      .eq("profile_id", data.user.id)
-      .single()
-
-    if (!apartmentDetails) {
-      redirect("/auth/complete-profile")
-    }
+  if (profile.user_type === "apartment" && !profile.apartment_details) {
+    redirect("/auth/complete-profile")
   }
 
   // Redirect to appropriate dashboard based on user type
@@ -49,3 +36,4 @@ export default async function DashboardPage() {
       redirect("/auth/login")
   }
 }
+

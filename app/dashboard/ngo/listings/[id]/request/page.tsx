@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -36,19 +35,13 @@ export default function RequestDonationPage({ params }: { params: Promise<{ id: 
     if (!listingId) return
 
     const fetchListing = async () => {
-      const supabase = createClient()
-      const { data } = await supabase
-        .from("clothing_listings")
-        .select(`
-          *,
-          profiles!clothing_listings_apartment_id_fkey(name, contact_person)
-        `)
-        .eq("id", listingId)
-        .single()
-
-      if (data) {
-        setListing(data)
-        setFormData((prev) => ({ ...prev, requested_quantity: data.quantity.toString() }))
+      const res = await fetch(`/api/listings/${listingId}`)
+      if (res.ok) {
+        const { data } = await res.json()
+        if (data) {
+          setListing(data)
+          setFormData((prev) => ({ ...prev, requested_quantity: data.quantity.toString() }))
+        }
       }
     }
 
@@ -61,28 +54,26 @@ export default function RequestDonationPage({ params }: { params: Promise<{ id: 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
 
     try {
-      const { data: user } = await supabase.auth.getUser()
-      if (!user.user) throw new Error("Not authenticated")
-
-      const requestedQty = Number.parseInt(formData.requested_quantity)
+      const requestedQty = parseInt(formData.requested_quantity)
       if (requestedQty <= 0 || requestedQty > listing.quantity) {
         throw new Error(`Requested quantity must be between 1 and ${listing.quantity}`)
       }
 
-      const { error } = await supabase.from("clothing_requests").insert({
-        ngo_id: user.user.id,
-        listing_id: listingId,
-        requested_quantity: requestedQty,
-        message: formData.message || null,
-        status: "pending",
+      const res = await fetch("/api/requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          listing_id: listingId,
+          requested_quantity: requestedQty,
+          message: formData.message || null,
+        }),
       })
-
-      if (error) throw error
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to submit request")
 
       router.push(`/dashboard/ngo/listings/${listingId}`)
     } catch (error: unknown) {

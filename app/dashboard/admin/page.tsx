@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getProfileById } from "@/lib/db/queries"
+import { query, queryOne } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -7,15 +9,13 @@ import { Building2, Users, Package, TrendingUp, Heart, Activity, MessageCircle, 
 import Link from "next/link"
 
 export default async function AdminDashboardPage() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getProfileById(session.userId)
 
   if (!profile || profile.user_type !== "admin") {
     redirect("/auth/login")
@@ -23,43 +23,59 @@ export default async function AdminDashboardPage() {
 
   // Get statistics
   const [
-    { count: totalApartments },
-    { count: totalNGOs },
-    { count: totalListings },
-    { count: activeListings },
-    { count: totalRequests },
-    { count: pendingRequests },
-    { count: approvedRequests },
-    { count: completedRequests },
-    { count: totalMessages },
+    totalApartmentsRow,
+    totalNGOsRow,
+    totalListingsRow,
+    activeListingsRow,
+    totalRequestsRow,
+    pendingRequestsRow,
+    approvedRequestsRow,
+    completedRequestsRow,
+    totalMessagesRow,
   ] = await Promise.all([
-    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("user_type", "apartment"),
-    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("user_type", "ngo"),
-    supabase.from("clothing_listings").select("*", { count: "exact", head: true }),
-    supabase.from("clothing_listings").select("*", { count: "exact", head: true }).eq("available", true),
-    supabase.from("clothing_requests").select("*", { count: "exact", head: true }),
-    supabase.from("clothing_requests").select("*", { count: "exact", head: true }).eq("status", "pending"),
-    supabase.from("clothing_requests").select("*", { count: "exact", head: true }).eq("status", "approved"),
-    supabase.from("clothing_requests").select("*", { count: "exact", head: true }).eq("status", "completed"),
-    supabase.from("messages").select("*", { count: "exact", head: true }),
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM profiles WHERE user_type = 'apartment'", []),
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM profiles WHERE user_type = 'ngo'", []),
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM clothing_listings", []),
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM clothing_listings WHERE available = TRUE", []),
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM clothing_requests", []),
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM clothing_requests WHERE status = 'pending'", []),
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM clothing_requests WHERE status = 'approved'", []),
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM clothing_requests WHERE status = 'completed'", []),
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM messages", []),
   ])
 
+  const totalApartments = parseInt(totalApartmentsRow?.count ?? "0")
+  const totalNGOs = parseInt(totalNGOsRow?.count ?? "0")
+  const totalListings = parseInt(totalListingsRow?.count ?? "0")
+  const activeListings = parseInt(activeListingsRow?.count ?? "0")
+  const totalRequests = parseInt(totalRequestsRow?.count ?? "0")
+  const pendingRequests = parseInt(pendingRequestsRow?.count ?? "0")
+  const approvedRequests = parseInt(approvedRequestsRow?.count ?? "0")
+  const completedRequests = parseInt(completedRequestsRow?.count ?? "0")
+  const totalMessages = parseInt(totalMessagesRow?.count ?? "0")
+
   // Get recent activities
-  const { data: recentListings } = await supabase
-    .from("clothing_listings")
-    .select(`
-      *,
-      profiles!clothing_listings_apartment_id_fkey(name, city, state)
-    `)
-    .order("created_at", { ascending: false })
-    .limit(5)
+  const recentListings = await query(
+    `SELECT cl.*, json_build_object('name', p.name, 'city', p.city, 'state', p.state) AS profiles
+     FROM clothing_listings cl
+     JOIN profiles p ON p.id = cl.apartment_id
+     ORDER BY cl.created_at DESC
+     LIMIT 5`,
+    []
+  )
 
-  const { data: recentRequests } = await supabase
-      .from("ngo_requests_with_name")
-    .select("*")
-    .limit(5);
+  const recentRequests = await query(
+    `SELECT cr.*,
+       json_build_object('name', np.name) AS ngo_profile,
+       json_build_object('title', cl.title) AS listing
+     FROM clothing_requests cr
+     JOIN profiles np ON np.id = cr.ngo_id
+     JOIN clothing_listings cl ON cl.id = cr.listing_id
+     ORDER BY cr.created_at DESC
+     LIMIT 5`,
+    []
+  )
 
-    console.log("Fetched Recent Requests for Admin:", recentRequests)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">

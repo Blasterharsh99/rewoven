@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getProfileById } from "@/lib/db/queries"
+import { query } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -7,30 +9,29 @@ import { ArrowLeft, Heart, Users, MapPin, Phone, User, Calendar, Globe, FileText
 import Link from "next/link"
 
 export default async function AdminNGOsPage() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getProfileById(session.userId)
 
   if (!profile || profile.user_type !== "admin") {
     redirect("/auth/login")
   }
 
   // Get all NGOs with their details and request counts
-  const { data: ngos } = await supabase
-    .from("profiles")
-    .select(`
-      *,
-      ngo_details(*),
-      clothing_requests(count)
-    `)
-    .eq("user_type", "ngo")
-    .order("created_at", { ascending: false })
+  const ngos = await query(
+    `SELECT p.*, row_to_json(nd.*) AS ngo_details, COUNT(cr.id) AS request_count
+     FROM profiles p
+     LEFT JOIN ngo_details nd ON nd.profile_id = p.id
+     LEFT JOIN clothing_requests cr ON cr.ngo_id = p.id
+     WHERE p.user_type = 'ngo'
+     GROUP BY p.id, nd.id
+     ORDER BY p.created_at DESC`,
+    []
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">

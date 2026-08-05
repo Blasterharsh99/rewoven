@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getProfileById } from "@/lib/db/queries"
+import { query } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -7,33 +9,39 @@ import { ArrowLeft, Heart, TrendingUp, Calendar, Package } from "lucide-react"
 import Link from "next/link"
 
 export default async function AdminRequestsPage() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getProfileById(session.userId)
 
   if (!profile || profile.user_type !== "admin") {
     redirect("/auth/login")
   }
 
   // Get all requests with details
-const { data: requests } = await supabase
-  .from("clothing_request_with_details")
-  .select("*")
-  .order("created_at", { ascending: false })
-
-console.log("Fetched Requests:", requests)
+  const requests = await query(
+    `SELECT cr.*,
+       json_build_object('name', np.name, 'contact_person', np.contact_person) AS ngo_profile,
+       json_build_object(
+         'title', cl.title, 'clothing_type', cl.clothing_type, 'quantity', cl.quantity,
+         'apartment_name', ap.name
+       ) AS listing_details
+     FROM clothing_requests cr
+     JOIN profiles np ON np.id = cr.ngo_id
+     JOIN clothing_listings cl ON cl.id = cr.listing_id
+     JOIN profiles ap ON ap.id = cl.apartment_id
+     ORDER BY cr.created_at DESC`,
+    []
+  )
 
   const statusCounts = {
-    pending: requests?.filter((r) => r.status === "pending").length || 0,
-    approved: requests?.filter((r) => r.status === "approved").length || 0,
-    rejected: requests?.filter((r) => r.status === "rejected").length || 0,
-    completed: requests?.filter((r) => r.status === "completed").length || 0,
+    pending: requests?.filter((r: any) => r.status === "pending").length || 0,
+    approved: requests?.filter((r: any) => r.status === "approved").length || 0,
+    rejected: requests?.filter((r: any) => r.status === "rejected").length || 0,
+    completed: requests?.filter((r: any) => r.status === "completed").length || 0,
   }
 
   return (

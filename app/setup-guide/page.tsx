@@ -24,17 +24,20 @@ export default function SetupGuidePage() {
                 <AlertDescription>
                   <strong>Required Environment Variables:</strong>
                   <br />
-                  You need to add these to your Vercel project settings:
+                  You need to add these to your environment (e.g. .env file or Vercel settings):
                 </AlertDescription>
               </Alert>
 
               <div className="bg-gray-100 p-4 rounded-lg font-mono text-sm">
                 <div className="space-y-1">
                   <div>
-                    <strong>NEXT_PUBLIC_SUPABASE_URL</strong> = your-supabase-project-url
+                    <strong>DATABASE_URL</strong> = postgresql://USER:PASSWORD@HOST/DATABASE?sslmode=require
                   </div>
                   <div>
-                    <strong>NEXT_PUBLIC_SUPABASE_ANON_KEY</strong> = your-supabase-anon-key
+                    <strong>JWT_SECRET</strong> = your-long-random-secret-string
+                  </div>
+                  <div>
+                    <strong>NEXT_PUBLIC_SITE_URL</strong> = http://localhost:3000
                   </div>
                 </div>
               </div>
@@ -43,13 +46,13 @@ export default function SetupGuidePage() {
                 <AlertDescription>
                   <strong>How to find these values:</strong>
                   <br />
-                  1. Go to your Supabase project dashboard
+                  1. Go to your Neon.tech dashboard (or any Postgres provider)
                   <br />
-                  2. Navigate to Settings → API
+                  2. Navigate to Connection Details → Connection String
                   <br />
-                  3. Copy the "Project URL" and "anon public" key
+                  3. Copy the URL to DATABASE_URL
                   <br />
-                  4. Add them to your Vercel project with the NEXT_PUBLIC_ prefix
+                  4. For JWT_SECRET, generate a strong random 32+ char string
                 </AlertDescription>
               </Alert>
             </CardContent>

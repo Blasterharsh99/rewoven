@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState, useEffect, useRef } from "react"
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -31,81 +30,40 @@ export default function NGOMessagesPage({ params }: { params: Promise<{ id: stri
     if (!requestId) return
 
     const fetchData = async () => {
-      const supabase = createClient()
-
       // Get current user
-      const { data: userData } = await supabase.auth.getUser()
-      if (userData.user) {
-        const { data: profile } = await supabase.from("profiles").select("*").eq("id", userData.user.id).single()
-        setCurrentUser(profile)
+      const meRes = await fetch("/api/auth/me")
+      if (meRes.ok) {
+        const { data } = await meRes.json()
+        setCurrentUser(data)
       }
 
       // Get request details
-      const { data: requestData } = await supabase
-        .from("clothing_requests")
-        .select(`
-          *,
-          clothing_listings!inner(title, apartment_id),
-          profiles!clothing_listings_apartment_id_fkey(name, contact_person)
-        `)
-        .eq("id", requestId)
-        .single()
-
-      if (requestData) {
-        setRequest(requestData)
+      const reqRes = await fetch(`/api/requests/${requestId}`)
+      if (reqRes.ok) {
+        const { data: requestData } = await reqRes.json()
+        if (requestData) setRequest(requestData)
       }
 
       // Get messages
-      const { data: messagesData } = await supabase
-        .from("messages")
-        .select(`
-          *,
-          profiles!messages_sender_id_fkey(name, contact_person, user_type)
-        `)
-        .eq("request_id", requestId)
-        .order("created_at", { ascending: true })
-
-      if (messagesData) {
-        setMessages(messagesData)
+      const msgRes = await fetch(`/api/messages?request_id=${requestId}`)
+      if (msgRes.ok) {
+        const { data: messagesData } = await msgRes.json()
+        if (messagesData) setMessages(messagesData)
       }
     }
 
     fetchData()
 
-    // Set up real-time subscription for messages
-    const supabase = createClient()
-    const channel = supabase
-      .channel("messages")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "messages",
-          filter: `request_id=eq.${requestId}`,
-        },
-        (payload) => {
-          // Fetch the new message with profile data
-          supabase
-            .from("messages")
-            .select(`
-              *,
-              profiles!messages_sender_id_fkey(name, contact_person, user_type)
-            `)
-            .eq("id", payload.new.id)
-            .single()
-            .then(({ data }) => {
-              if (data) {
-                setMessages((prev) => [...prev, data])
-              }
-            })
-        },
-      )
-      .subscribe()
+    // Poll for new messages every 3 seconds
+    const pollInterval = setInterval(async () => {
+      const msgRes = await fetch(`/api/messages?request_id=${requestId}`)
+      if (msgRes.ok) {
+        const { data: messagesData } = await msgRes.json()
+        if (messagesData) setMessages(messagesData)
+      }
+    }, 3000)
 
-    return () => {
-      supabase.removeChannel(channel)
-    }
+    return () => clearInterval(pollInterval)
   }, [requestId])
 
   useEffect(() => {
@@ -116,19 +74,28 @@ export default function NGOMessagesPage({ params }: { params: Promise<{ id: stri
     e.preventDefault()
     if (!newMessage.trim() || !currentUser) return
 
-    const supabase = createClient()
     setIsLoading(true)
 
     try {
-      const { error } = await supabase.from("messages").insert({
-        request_id: requestId,
-        sender_id: currentUser.id,
-        message: newMessage.trim(),
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          request_id: requestId,
+          message: newMessage.trim(),
+        }),
       })
 
-      if (error) throw error
+      if (!res.ok) throw new Error("Failed to send message")
 
       setNewMessage("")
+
+      // Refresh messages
+      const msgRes = await fetch(`/api/messages?request_id=${requestId}`)
+      if (msgRes.ok) {
+        const { data } = await msgRes.json()
+        if (data) setMessages(data)
+      }
     } catch (error) {
       console.error("Error sending message:", error)
     } finally {
@@ -139,6 +106,7 @@ export default function NGOMessagesPage({ params }: { params: Promise<{ id: stri
   if (!request || !currentUser) {
     return <div>Loading...</div>
   }
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">

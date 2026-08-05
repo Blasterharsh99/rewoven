@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getProfileById } from "@/lib/db/queries"
+import { query, queryOne } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -7,58 +9,50 @@ import { Search, Package, Users, TrendingUp, Heart, MapPin } from "lucide-react"
 import Link from "next/link"
 
 export default async function NGODashboardPage() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getProfileById(session.userId)
 
   if (!profile || profile.user_type !== "ngo") {
     redirect("/auth/login")
   }
 
   // Get NGO details
-  const { data: ngoDetails, error: ngoError } = await supabase
-    .from("ngo_details")
-    .select("*")
-    .eq("profile_id", profile.id)
-    .single()
+  const ngoDetails = await queryOne(
+    "SELECT * FROM ngo_details WHERE profile_id = $1",
+    [profile.id]
+  )
 
   // If NGO details don't exist, redirect to complete profile
-  if (ngoError || !ngoDetails) {
+  if (!ngoDetails) {
     redirect("/auth/complete-profile")
   }
 
   // Get available clothing listings
-const { data: availableListings} = await supabase
-  .from("clothing_listings")
-  .select(`
-    *,
-    profiles (
-      name,
-      city,
-      state
-    )
-  `)
-  .eq("available", true)
+  const availableListings = await query(
+    `SELECT cl.*, json_build_object('name', p.name, 'city', p.city, 'state', p.state) AS profiles
+     FROM clothing_listings cl
+     JOIN profiles p ON p.id = cl.apartment_id
+     WHERE cl.available = TRUE
+     ORDER BY cl.created_at DESC
+     LIMIT 5`,
+    []
+  )
 
-    console.log("Available Listings:", availableListings)
   // Get NGO's requests
-const { data: requests } = await supabase
-  .from("clothing_requests")
-  .select(`
-    *,
-    clothing_listings!inner (
-      title,
-      apartment_id
-    )
-  `)
-  .eq("ngo_id", profile.id)
-  .order("created_at", { ascending: false })
+  const requests = await query(
+    `SELECT cr.*,
+       json_build_object('title', cl.title, 'apartment_id', cl.apartment_id) AS clothing_listings
+     FROM clothing_requests cr
+     JOIN clothing_listings cl ON cl.id = cr.listing_id
+     WHERE cr.ngo_id = $1
+     ORDER BY cr.created_at DESC`,
+    [profile.id]
+  )
 
   const totalRequests = requests?.length || 0
   const pendingRequests = requests?.filter((r) => r.status === "pending").length || 0

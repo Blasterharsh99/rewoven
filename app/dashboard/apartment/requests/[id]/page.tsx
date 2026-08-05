@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -24,62 +23,17 @@ export default function RequestDetailsPage({ params }: { params: { id: string } 
     if (!requestId) return
 
     const fetchRequest = async () => {
-      const supabase = createClient()
-
-      // 1. Fetch clothing request details
-      const { data: requestData, error: requestError } = await supabase
-        .from("clothing_requests")
-        .select("*")
-        .eq("id", requestId)
-        .single()
-
-      if (requestError || !requestData) {
-        setError(requestError?.message || "Request not found")
+      const res = await fetch(`/api/requests/${requestId}`)
+      if (!res.ok) {
+        setError("Request not found")
         return
       }
-      setRequest(requestData)
-
-      // 2. Fetch clothing listing details
-      let listingDetails = null
-      if (requestData.listing_id) {
-        const { data: listingData, error: listingError } = await supabase
-          .from("clothing_listings")
-          .select("*")
-          .eq("id", requestData.listing_id)
-          .single()
-        if (!listingError && listingData) {
-          listingDetails = listingData
-        }
+      const { data } = await res.json()
+      if (data) {
+        setRequest(data)
+        setNgoDetails(data.clothing_listings)
+        setProfileDetails({ ...data.ngo_profiles, ...data.ngo_details })
       }
-
-      // 3. Fetch NGO profile details
-      let ngoProfileDetails = null
-      if (requestData.ngo_id) {
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", requestData.ngo_id)
-          .single()
-        if (!profileError && profileData) {
-          ngoProfileDetails = profileData
-        }
-      }
-
-      // 4. Fetch NGO details (organization info)
-      let ngoOrgDetails = null
-      if (requestData.ngo_id) {
-        const { data: ngoData, error: ngoError } = await supabase
-          .from("ngo_details")
-          .select("*")
-          .eq("profile_id", requestData.ngo_id)
-          .single()
-        if (!ngoError && ngoData) {
-          ngoOrgDetails = ngoData
-        }
-      }
-
-      setNgoDetails({ ...listingDetails })
-      setProfileDetails({ ...ngoProfileDetails, ...ngoOrgDetails })
     }
 
     fetchRequest()
@@ -87,26 +41,19 @@ export default function RequestDetailsPage({ params }: { params: { id: string } 
 
 
   const handleStatusUpdate = async (newStatus: string) => {
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
 
     try {
-      const { error } = await supabase
-        .from("clothing_requests")
-        .update({ status: newStatus, updated_at: new Date().toISOString() })
-        .eq("id", requestId)
-
-      if (error) throw error
+      const res = await fetch(`/api/requests/${requestId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to update status")
 
       setRequest((prev: any) => ({ ...prev, status: newStatus }))
-
-      if (newStatus === "approved" && request?.clothing_listings?.id) {
-        await supabase
-          .from("clothing_listings")
-          .update({ available: false })
-          .eq("id", request.clothing_listings.id)
-      }
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred")
     } finally {

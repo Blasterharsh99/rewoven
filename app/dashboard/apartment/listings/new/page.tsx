@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -34,27 +33,25 @@ export default function NewListingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
 
     try {
-      const { data: user } = await supabase.auth.getUser()
-      if (!user.user) throw new Error("Not authenticated")
-
-      const { error } = await supabase.from("clothing_listings").insert({
-        apartment_id: user.user.id,
-        title: formData.title,
-        description: formData.description || null,
-        clothing_type: formData.clothing_type,
-        quantity: Number.parseInt(formData.quantity) || 1,
-        condition: formData.condition,
-        size_range: formData.size_range || null,
-        pickup_instructions: formData.pickup_instructions || null,
-        available: true,
+      const res = await fetch("/api/listings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: formData.title,
+          description: formData.description || null,
+          clothing_type: formData.clothing_type,
+          quantity: parseInt(formData.quantity) || 1,
+          condition: formData.condition,
+          size_range: formData.size_range || null,
+          pickup_instructions: formData.pickup_instructions || null,
+        }),
       })
-
-      if (error) throw error
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to create listing")
 
       router.push("/dashboard/apartment")
     } catch (error: unknown) {

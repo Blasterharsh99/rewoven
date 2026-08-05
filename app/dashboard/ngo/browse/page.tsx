@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getProfileById } from "@/lib/db/queries"
+import { query as dbQuery } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -12,41 +14,45 @@ export default async function BrowseListingsPage({
 }: {
   searchParams: Promise<{ search?: string; type?: string }>
 }) {
-  const supabase = await createClient()
+  const session = await getSession()
   const params = await searchParams
 
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getProfileById(session.userId)
 
   if (!profile || profile.user_type !== "ngo") {
     redirect("/auth/login")
   }
 
   // Build query for listings
-  let query = supabase
-    .from("clothing_listings")
-    .select(`
-      *,
-      profiles!clothing_listings_apartment_id_fkey(name, city, state, contact_person, phone)
-    `)
-    .eq("available", true)
+  const conditions: string[] = ["cl.available = TRUE"]
+  const values: unknown[] = []
+  let idx = 1
 
-  // Apply search filter
   if (params.search) {
-    query = query.or(`title.ilike.%${params.search}%,description.ilike.%${params.search}%`)
+    conditions.push(`(cl.title ILIKE $${idx} OR cl.description ILIKE $${idx})`)
+    values.push(`%${params.search}%`)
+    idx++
   }
 
-  // Apply type filter
   if (params.type && params.type !== "all") {
-    query = query.eq("clothing_type", params.type)
+    conditions.push(`cl.clothing_type = $${idx++}`)
+    values.push(params.type)
   }
 
-  const { data: listings } = await query.order("created_at", { ascending: false })
+  const where = `WHERE ${conditions.join(" AND ")}`
+  const listings = await dbQuery(
+    `SELECT cl.*, json_build_object('name', p.name, 'city', p.city, 'state', p.state, 'contact_person', p.contact_person, 'phone', p.phone) AS profiles
+     FROM clothing_listings cl
+     JOIN profiles p ON p.id = cl.apartment_id
+     ${where}
+     ORDER BY cl.created_at DESC`,
+    values
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">

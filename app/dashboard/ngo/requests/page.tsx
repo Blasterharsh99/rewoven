@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getProfileById } from "@/lib/db/queries"
+import { query } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -7,30 +9,30 @@ import { ArrowLeft, Heart, MessageCircle, Eye } from "lucide-react"
 import Link from "next/link"
 
 export default async function NGORequestsPage() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getProfileById(session.userId)
 
   if (!profile || profile.user_type !== "ngo") {
     redirect("/auth/login")
   }
 
   // Get NGO's requests
-  const { data: requests } = await supabase
-    .from("clothing_requests")
-    .select(`
-      *,
-      clothing_listings!inner(title, apartment_id),
-      profiles!clothing_listings_apartment_id_fkey(name, contact_person, phone)
-    `)
-    .eq("ngo_id", profile.id)
-    .order("created_at", { ascending: false })
+  const requests = await query(
+    `SELECT cr.*,
+       json_build_object('title', cl.title, 'apartment_id', cl.apartment_id) AS clothing_listings,
+       json_build_object('name', ap.name, 'contact_person', ap.contact_person, 'phone', ap.phone) AS profiles
+     FROM clothing_requests cr
+     JOIN clothing_listings cl ON cl.id = cr.listing_id
+     JOIN profiles ap ON ap.id = cl.apartment_id
+     WHERE cr.ngo_id = $1
+     ORDER BY cr.created_at DESC`,
+    [profile.id]
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">

@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getProfileById } from "@/lib/db/queries"
+import { query, queryOne } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -7,43 +9,42 @@ import { Plus, Package, Users, TrendingUp, Heart } from "lucide-react"
 import Link from "next/link"
 
 export default async function ApartmentDashboardPage() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getProfileById(session.userId)
 
   if (!profile || profile.user_type !== "apartment") {
     redirect("/auth/login")
   }
 
   // Get apartment details
-  const { data: apartmentDetails } = await supabase
-    .from("apartment_details")
-    .select("*")
-    .eq("profile_id", profile.id)
-    .single()
+  const apartmentDetails = await queryOne(
+    "SELECT * FROM apartment_details WHERE profile_id = $1",
+    [profile.id]
+  )
 
   // Get clothing listings
-  const { data: listings } = await supabase
-    .from("clothing_listings")
-    .select("*")
-    .eq("apartment_id", profile.id)
+  const listings = await query(
+    "SELECT * FROM clothing_listings WHERE apartment_id = $1",
+    [profile.id]
+  )
 
   // Get requests for apartment's listings
-  const { data: requests } = await supabase
-    .from("clothing_requests")
-    .select(`
-      *,
-      clothing_listings!inner(title, apartment_id),
-      profiles!clothing_requests_ngo_id_fkey(name)
-    `)
-    .eq("clothing_listings.apartment_id", profile.id)
-    .order("created_at", { ascending: false })
+  const requests = await query(
+    `SELECT cr.*, 
+       json_build_object('title', cl.title, 'apartment_id', cl.apartment_id) AS clothing_listings,
+       json_build_object('name', p.name) AS profiles
+     FROM clothing_requests cr
+     JOIN clothing_listings cl ON cl.id = cr.listing_id
+     JOIN profiles p ON p.id = cr.ngo_id
+     WHERE cl.apartment_id = $1
+     ORDER BY cr.created_at DESC`,
+    [profile.id]
+  )
 
   const totalListings = listings?.length || 0
   const activeListings = listings?.filter((l) => l.available).length || 0

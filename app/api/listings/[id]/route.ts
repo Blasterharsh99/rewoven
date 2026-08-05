@@ -1,22 +1,24 @@
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getListingById, updateListing } from "@/lib/db/queries"
+import { query, queryOne } from "@/lib/db"
 import { type NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient()
   const { id } = await params
 
   try {
-    const { data, error } = await supabase
-      .from("clothing_listings")
-      .select(`
-        *,
-        profiles!clothing_listings_apartment_id_fkey(name, city, state, contact_person, phone, address),
-        apartment_details!inner(apartment_name, total_units)
-      `)
-      .eq("id", id)
-      .single()
-
-    if (error) throw error
+    const rows = await query(
+      `SELECT cl.*,
+         json_build_object('name', p.name, 'city', p.city, 'state', p.state, 'contact_person', p.contact_person, 'phone', p.phone, 'address', p.address) AS profiles,
+         row_to_json(ad.*) AS apartment_details
+       FROM clothing_listings cl
+       JOIN profiles p ON p.id = cl.apartment_id
+       LEFT JOIN apartment_details ad ON ad.profile_id = cl.apartment_id
+       WHERE cl.id = $1`,
+      [id]
+    )
+    const data = rows[0] ?? null
+    if (!data) throw new Error("Not found")
 
     return NextResponse.json({ data, success: true })
   } catch (error) {
@@ -25,27 +27,27 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient()
   const { id } = await params
 
   try {
-    const { data: user } = await supabase.auth.getUser()
-    if (!user.user) {
+    const session = await getSession()
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized", success: false }, { status: 401 })
     }
 
     const body = await request.json()
 
     // Verify ownership
-    const { data: listing } = await supabase.from("clothing_listings").select("apartment_id").eq("id", id).single()
+    const listing = await queryOne<{ apartment_id: string }>(
+      "SELECT apartment_id FROM clothing_listings WHERE id = $1",
+      [id]
+    )
 
-    if (!listing || listing.apartment_id !== user.user.id) {
+    if (!listing || listing.apartment_id !== session.userId) {
       return NextResponse.json({ error: "Forbidden", success: false }, { status: 403 })
     }
 
-    const { data, error } = await supabase.from("clothing_listings").update(body).eq("id", id).select().single()
-
-    if (error) throw error
+    const data = await updateListing(id, body)
 
     return NextResponse.json({ data, success: true })
   } catch (error) {
@@ -54,25 +56,25 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient()
   const { id } = await params
 
   try {
-    const { data: user } = await supabase.auth.getUser()
-    if (!user.user) {
+    const session = await getSession()
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized", success: false }, { status: 401 })
     }
 
     // Verify ownership
-    const { data: listing } = await supabase.from("clothing_listings").select("apartment_id").eq("id", id).single()
+    const listing = await queryOne<{ apartment_id: string }>(
+      "SELECT apartment_id FROM clothing_listings WHERE id = $1",
+      [id]
+    )
 
-    if (!listing || listing.apartment_id !== user.user.id) {
+    if (!listing || listing.apartment_id !== session.userId) {
       return NextResponse.json({ error: "Forbidden", success: false }, { status: 403 })
     }
 
-    const { error } = await supabase.from("clothing_listings").delete().eq("id", id)
-
-    if (error) throw error
+    await query("DELETE FROM clothing_listings WHERE id = $1", [id])
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getProfileById } from "@/lib/db/queries"
+import { query, queryOne } from "@/lib/db"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -7,43 +9,42 @@ import { ArrowLeft, Heart, MapPin, Phone, User, Calendar, Package } from "lucide
 import Link from "next/link"
 
 export default async function ListingDetailsPage({ params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient()
+  const session = await getSession()
   const { id } = await params
 
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getProfileById(session.userId)
 
   if (!profile || profile.user_type !== "ngo") {
     redirect("/auth/login")
   }
 
   // Get listing details
-  const { data: listing } = await supabase
-    .from("clothing_listings")
-    .select(`
-      *,
-      profiles!clothing_listings_apartment_id_fkey(name, city, state, contact_person, phone, address),
-      apartment_details!inner(apartment_name, total_units)
-    `)
-    .eq("id", id)
-    .single()
+  const rows = await query(
+    `SELECT cl.*,
+       json_build_object('name', p.name, 'city', p.city, 'state', p.state, 'contact_person', p.contact_person, 'phone', p.phone, 'address', p.address) AS profiles,
+       row_to_json(ad.*) AS apartment_details
+     FROM clothing_listings cl
+     JOIN profiles p ON p.id = cl.apartment_id
+     LEFT JOIN apartment_details ad ON ad.profile_id = cl.apartment_id
+     WHERE cl.id = $1`,
+    [id]
+  )
+  const listing = rows[0] ?? null
 
   if (!listing) {
     redirect("/dashboard/ngo/browse")
   }
 
   // Check if NGO has already requested this listing
-  const { data: existingRequest } = await supabase
-    .from("clothing_requests")
-    .select("*")
-    .eq("ngo_id", profile.id)
-    .eq("listing_id", listing.id)
-    .single()
+  const existingRequest = await queryOne(
+    "SELECT * FROM clothing_requests WHERE ngo_id = $1 AND listing_id = $2",
+    [profile.id, (listing as any).id]
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">

@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getProfileById } from "@/lib/db/queries"
+import { query, queryOne } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -14,62 +16,67 @@ export default async function AdminListingsPage({
 }: {
   searchParams: { search?: string; status?: string; type?: string }
 }) {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getProfileById(session.userId)
 
   if (!profile || profile.user_type !== "admin") {
     redirect("/auth/login")
   }
 
   // Build query with filters
-  let query = supabase
-    .from("clothing_listings")
-    .select(`
-      *,
-      profiles!clothing_listings_apartment_id_fkey(name, contact_person, city, state),
-      clothing_requests(count)
-    `)
-    .order("created_at", { ascending: false })
+  const conditions: string[] = []
+  const values: unknown[] = []
+  let idx = 1
 
-  // Apply filters
-    if (searchParams.search) {
-  query = query.ilike("title", `%${searchParams.search}%`)
-}
+  if (searchParams.search) {
+    conditions.push(`cl.title ILIKE $${idx++}`)
+    values.push(`%${searchParams.search}%`)
+  }
 
+  if (searchParams.status && searchParams.status !== "all") {
+    conditions.push(`cl.available = $${idx++}`)
+    values.push(searchParams.status === "available")
+  }
 
-    if (searchParams.status && searchParams.status !== "all") {
-    query = query.eq("available", searchParams.status === "available")
-    }
+  if (searchParams.type && searchParams.type !== "all") {
+    conditions.push(`cl.clothing_type = $${idx++}`)
+    values.push(searchParams.type)
+  }
 
+  const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : ""
 
-    if (searchParams.type && searchParams.type !== "all") {
-    query = query.eq("clothing_type", searchParams.type)
-    }
-
-
-  const { data: listings } = await query
+  const listings = await query(
+    `SELECT cl.*,
+       json_build_object('name', p.name, 'contact_person', p.contact_person, 'city', p.city, 'state', p.state) AS profiles,
+       COUNT(cr.id) AS request_count
+     FROM clothing_listings cl
+     JOIN profiles p ON p.id = cl.apartment_id
+     LEFT JOIN clothing_requests cr ON cr.listing_id = cl.id
+     ${where}
+     GROUP BY cl.id, p.id
+     ORDER BY cl.created_at DESC`,
+    values
+  )
 
   // Get statistics
-  const [{ count: totalListings }, { count: availableListings }, { count: unavailableListings }] = await Promise.all([
-    supabase.from("clothing_listings").select("*", { count: "exact", head: true }),
-    supabase.from("clothing_listings").select("*", { count: "exact", head: true }).eq("available", true),
-    supabase.from("clothing_listings").select("*", { count: "exact", head: true }).eq("available", false),
+  const [totalRow, availableRow, unavailableRow] = await Promise.all([
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM clothing_listings", []),
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM clothing_listings WHERE available = TRUE", []),
+    queryOne<{ count: string }>("SELECT COUNT(*) FROM clothing_listings WHERE available = FALSE", []),
   ])
 
-  // Get unique clothing types for filter
-  const { data: clothingTypes } = await supabase
-    .from("clothing_listings")
-    .select("clothing_type")
-    .not("clothing_type", "is", null)
+  const totalListings = parseInt(totalRow?.count ?? "0")
+  const availableListings = parseInt(availableRow?.count ?? "0")
+  const unavailableListings = parseInt(unavailableRow?.count ?? "0")
 
-  const uniqueTypes = [...new Set(clothingTypes?.map((item) => item.clothing_type) || [])]
+  // Get unique clothing types for filter
+  const typeRows = await query("SELECT DISTINCT clothing_type FROM clothing_listings WHERE clothing_type IS NOT NULL", [])
+  const uniqueTypes = typeRows.map((r: any) => r.clothing_type)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">

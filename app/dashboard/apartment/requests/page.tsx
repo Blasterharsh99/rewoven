@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getProfileById } from "@/lib/db/queries"
+import { query } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -7,51 +9,36 @@ import { ArrowLeft, Heart, MessageCircle, Eye } from "lucide-react"
 import Link from "next/link"
 
 export default async function ApartmentRequestsPage() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getProfileById(session.userId)
 
   if (!profile || profile.user_type !== "apartment") {
     redirect("/auth/login")
   }
 
   // Get requests for apartment's listings
-const { data: requests, error: RequestError } = await supabase
-  .from("clothing_requests")
-  .select(`
-    *,
-    profiles!clothing_requests_ngo_id_fkey (
-      id,
-      name,
-      contact_person,
-      city,
-      state,
-      phone,
-      ngo_details:ngo_details!profiles_id_fkey (
-        ngo_name,
-        focus_areas
-      )
-    ),
-    clothing_listings!clothing_requests_listing_id_fkey (
-      id,
-      title,
-      apartment_id,
-      clothing_type,
-      quantity
-    )
-  `)
-  .eq("clothing_listings.apartment_id", profile.id)
-
-
-
-    console.log("Fetched Requests for Apartment:", requests)
-    console.log("Request Fetch Error:", RequestError)
+  const requests = await query(
+    `SELECT cr.*,
+       json_build_object(
+         'id', p.id, 'name', p.name, 'contact_person', p.contact_person,
+         'city', p.city, 'state', p.state, 'phone', p.phone
+       ) AS profiles,
+       json_build_object(
+         'id', cl.id, 'title', cl.title, 'apartment_id', cl.apartment_id,
+         'clothing_type', cl.clothing_type, 'quantity', cl.quantity
+       ) AS clothing_listings
+     FROM clothing_requests cr
+     JOIN profiles p ON p.id = cr.ngo_id
+     JOIN clothing_listings cl ON cl.id = cr.listing_id
+     WHERE cl.apartment_id = $1
+     ORDER BY cr.created_at DESC`,
+    [profile.id]
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">

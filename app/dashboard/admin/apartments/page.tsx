@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getProfileById } from "@/lib/db/queries"
+import { query } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -7,25 +9,29 @@ import { ArrowLeft, Heart, Building2, MapPin, Phone, User, Calendar } from "luci
 import Link from "next/link"
 
 export default async function AdminApartmentsPage() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get user profile
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single()
+  const profile = await getProfileById(session.userId)
 
   if (!profile || profile.user_type !== "admin") {
     redirect("/auth/login")
   }
 
   // Get all apartments with their details and listing counts
- const { data: apartments } = await supabase
-  .from("apartment_with_listing_counts")
-  .select("*")
-  .order("created_at", { ascending: false }) 
+  const apartments = await query(
+    `SELECT p.*, row_to_json(ad.*) AS apartment_details, COUNT(cl.id) AS listing_count
+     FROM profiles p
+     LEFT JOIN apartment_details ad ON ad.profile_id = p.id
+     LEFT JOIN clothing_listings cl ON cl.apartment_id = p.id
+     WHERE p.user_type = 'apartment'
+     GROUP BY p.id, ad.id
+     ORDER BY p.created_at DESC`,
+    []
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">

@@ -2,7 +2,6 @@
 
 import type React from "react"
 
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -41,37 +40,35 @@ export default function CompleteProfilePage() {
 
   useEffect(() => {
     const getUser = async () => {
-      const supabase = createClient()
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-
-      if (!user) {
+      const res = await fetch("/api/auth/me")
+      if (!res.ok) {
         router.push("/auth/login")
         return
       }
+      const { data } = await res.json()
+      setUser(data)
 
-      setUser(user)
-
-      // Pre-fill form with metadata if available
-      const metadata = user.user_metadata || {}
-      setUserType(metadata.user_type || "apartment")
+      // Pre-fill form with profile data if available
+      const profile = data.profile || {}
+      setUserType(profile.user_type || "apartment")
       setFormData({
-        name: metadata.name || "",
-        contactPerson: metadata.contact_person || "",
-        phone: metadata.phone || "",
-        address: metadata.address || "",
-        city: metadata.city || "",
-        state: metadata.state || "",
-        pincode: metadata.pincode || "",
-        apartmentName: metadata.apartment_name || "",
-        totalUnits: metadata.total_units || "",
-        registrationNumber: metadata.society_registration_number || "",
-        ngoName: metadata.ngo_name || "",
-        ngoRegistrationNumber: metadata.ngo_registration_number || "",
-        headOfficeAddress: metadata.head_office_address || "",
-        website: metadata.website || "",
-        focusAreas: Array.isArray(metadata.focus_areas) ? metadata.focus_areas.join(", ") : "",
+        name: profile.name || "",
+        contactPerson: profile.contact_person || "",
+        phone: profile.phone || "",
+        address: profile.address || "",
+        city: profile.city || "",
+        state: profile.state || "",
+        pincode: profile.pincode || "",
+        apartmentName: profile.apartment_details?.apartment_name || "",
+        totalUnits: profile.apartment_details?.total_units?.toString() || "",
+        registrationNumber: profile.apartment_details?.society_registration_number || "",
+        ngoName: profile.ngo_details?.ngo_name || "",
+        ngoRegistrationNumber: profile.ngo_details?.registration_number || "",
+        headOfficeAddress: profile.ngo_details?.head_office_address || "",
+        website: profile.ngo_details?.website || "",
+        focusAreas: Array.isArray(profile.ngo_details?.focus_areas)
+          ? profile.ngo_details.focus_areas.join(", ")
+          : "",
       })
     }
 
@@ -85,51 +82,46 @@ export default function CompleteProfilePage() {
   const handleCompleteProfile = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user) return
-
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
 
     try {
-      const { error: profileError } = await supabase.from("profiles").upsert({
-        id: user.id,
+      const profile_data = {
         user_type: userType,
         name: formData.name,
         contact_person: formData.contactPerson,
-        email: user.email,
         phone: formData.phone,
         address: formData.address,
         city: formData.city,
         state: formData.state,
         pincode: formData.pincode,
-      })
-
-      if (profileError) throw profileError
-
-      if (userType === "apartment") {
-        const { error: apartmentError } = await supabase.from("apartment_details").upsert({
-          profile_id: user.id,
-          apartment_name: formData.apartmentName,
-          total_units: formData.totalUnits ? Number.parseInt(formData.totalUnits) : null,
-          society_registration_number: formData.registrationNumber,
-        })
-
-        if (apartmentError) throw apartmentError
-      } else {
-        const { error: ngoError } = await supabase.from("ngo_details").upsert({
-          profile_id: user.id,
-          ngo_name: formData.ngoName,
-          registration_number: formData.ngoRegistrationNumber,
-          head_office_address: formData.headOfficeAddress,
-          website: formData.website,
-          focus_areas: formData.focusAreas
-            .split(",")
-            .map((area) => area.trim())
-            .filter(Boolean),
-        })
-
-        if (ngoError) throw ngoError
       }
+
+      const details_data =
+        userType === "apartment"
+          ? {
+              apartment_name: formData.apartmentName,
+              total_units: formData.totalUnits ? parseInt(formData.totalUnits) : null,
+              society_registration_number: formData.registrationNumber,
+            }
+          : {
+              ngo_name: formData.ngoName,
+              registration_number: formData.ngoRegistrationNumber,
+              head_office_address: formData.headOfficeAddress,
+              website: formData.website,
+              focus_areas: formData.focusAreas
+                .split(",")
+                .map((area) => area.trim())
+                .filter(Boolean),
+            }
+
+      const res = await fetch("/api/profile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile_data, details_data }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to update profile")
 
       router.push("/dashboard")
     } catch (error: unknown) {

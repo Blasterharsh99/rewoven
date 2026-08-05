@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { query } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -7,19 +8,16 @@ import { Plus, ArrowLeft, Heart, Package, Edit, Eye } from "lucide-react"
 import Link from "next/link"
 
 export default async function ListingsPage() {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
   // Get clothing listings
-  const { data: listings } = await supabase
-    .from("clothing_listings")
-    .select("*")
-    .eq("apartment_id", data.user.id)
-    .order("created_at", { ascending: false })
+  const listings = await query(
+    "SELECT * FROM clothing_listings WHERE apartment_id = $1 ORDER BY created_at DESC",
+    [session.userId]
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">

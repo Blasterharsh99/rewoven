@@ -1,24 +1,14 @@
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { getRequestById, updateRequest } from "@/lib/db/queries"
+import { query } from "@/lib/db"
 import { type NextRequest, NextResponse } from "next/server"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient()
   const { id } = await params
 
   try {
-    const { data, error } = await supabase
-      .from("clothing_requests")
-      .select(`
-        *,
-        clothing_listings!inner(title, description, clothing_type, quantity, condition, size_range, apartment_id),
-        ngo_profiles:profiles!clothing_requests_ngo_id_fkey(name, contact_person, phone, address, city, state),
-        apartment_profiles:profiles!clothing_listings_apartment_id_fkey(name, contact_person, phone, address, city, state),
-        ngo_details!inner(ngo_name, registration_number, focus_areas, website)
-      `)
-      .eq("id", id)
-      .single()
-
-    if (error) throw error
+    const data = await getRequestById(id)
+    if (!data) throw new Error("Not found")
 
     return NextResponse.json({ data, success: true })
   } catch (error) {
@@ -27,12 +17,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 export async function PUT(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const supabase = await createClient()
   const { id } = await params
 
   try {
-    const { data: user } = await supabase.auth.getUser()
-    if (!user.user) {
+    const session = await getSession()
+    if (!session) {
       return NextResponse.json({ error: "Unauthorized", success: false }, { status: 401 })
     }
 
@@ -40,14 +29,14 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const { status } = body
 
     // Get request details to verify permissions
-    const { data: requestData } = await supabase
-      .from("clothing_requests")
-      .select(`
-        *,
-        clothing_listings!inner(apartment_id)
-      `)
-      .eq("id", id)
-      .single()
+    const rows = await query<{ ngo_id: string; listing_id: string; apartment_id: string }>(
+      `SELECT cr.ngo_id, cr.listing_id, cl.apartment_id
+       FROM clothing_requests cr
+       JOIN clothing_listings cl ON cl.id = cr.listing_id
+       WHERE cr.id = $1`,
+      [id]
+    )
+    const requestData = rows[0] ?? null
 
     if (!requestData) {
       return NextResponse.json({ error: "Request not found", success: false }, { status: 404 })
@@ -55,25 +44,21 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Check if user has permission to update this request
     const canUpdate =
-      requestData.ngo_id === user.user.id || // NGO can update their own request
-      requestData.clothing_listings.apartment_id === user.user.id // Apartment can update requests for their listings
+      requestData.ngo_id === session.userId ||
+      requestData.apartment_id === session.userId
 
     if (!canUpdate) {
       return NextResponse.json({ error: "Forbidden", success: false }, { status: 403 })
     }
 
-    const { data, error } = await supabase
-      .from("clothing_requests")
-      .update({ status, updated_at: new Date().toISOString() })
-      .eq("id", id)
-      .select()
-      .single()
-
-    if (error) throw error
+    const data = await updateRequest(id, { status, updated_at: new Date().toISOString() })
 
     // If approved, mark listing as unavailable
     if (status === "approved") {
-      await supabase.from("clothing_listings").update({ available: false }).eq("id", requestData.listing_id)
+      await query(
+        "UPDATE clothing_listings SET available = FALSE WHERE id = $1",
+        [requestData.listing_id]
+      )
     }
 
     return NextResponse.json({ data, success: true })

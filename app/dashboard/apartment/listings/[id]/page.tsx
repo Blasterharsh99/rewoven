@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+import { getSession } from "@/lib/auth/session"
+import { query, queryOne } from "@/lib/db"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -7,37 +8,31 @@ import { ArrowLeft, Heart, Edit, Package, Calendar, User } from "lucide-react"
 import Link from "next/link"
 
 export default async function ListingDetailPage({ params }: { params: { id: string } }) {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase.auth.getUser()
-  if (error || !data?.user) {
+  const session = await getSession()
+  if (!session) {
     redirect("/auth/login")
   }
 
-  // Get the specific listing
-  const { data: listing } = await supabase
-    .from("clothing_listings")
-    .select("*")
-    .eq("id", params.id)
-    .eq("apartment_id", data.user.id) // Ensure user owns this listing
-    .single()
+  // Get the specific listing (ensure user owns it)
+  const listing = await queryOne(
+    "SELECT * FROM clothing_listings WHERE id = $1 AND apartment_id = $2",
+    [params.id, session.userId]
+  )
 
   if (!listing) {
     redirect("/dashboard/apartment/listings")
   }
 
   // Get any requests for this listing
-  const { data: requests } = await supabase
-    .from("clothing_requests")
-    .select(`
-      *,
-      profiles!clothing_requests_ngo_id_fkey (
-        full_name,
-        organization_name
-      )
-    `)
-    .eq("listing_id", params.id)
-    .order("created_at", { ascending: false })
+  const requests = await query(
+    `SELECT cr.*,
+       json_build_object('name', p.name, 'contact_person', p.contact_person) AS profiles
+     FROM clothing_requests cr
+     JOIN profiles p ON p.id = cr.ngo_id
+     WHERE cr.listing_id = $1
+     ORDER BY cr.created_at DESC`,
+    [params.id]
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">

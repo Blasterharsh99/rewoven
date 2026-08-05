@@ -3,7 +3,6 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -34,21 +33,10 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
   // Load existing listing data
   useEffect(() => {
     const loadListing = async () => {
-      const supabase = createClient()
-
       try {
-        const { data: user } = await supabase.auth.getUser()
-        if (!user.user) throw new Error("Not authenticated")
-
-        const { data: listing, error } = await supabase
-          .from("clothing_listings")
-          .select("*")
-          .eq("id", params.id)
-          .eq("apartment_id", user.user.id)
-          .single()
-
-        if (error) throw error
-        if (!listing) throw new Error("Listing not found")
+        const res = await fetch(`/api/listings/${params.id}`)
+        if (!res.ok) throw new Error("Listing not found")
+        const { data: listing } = await res.json()
 
         setFormData({
           title: listing.title,
@@ -77,30 +65,26 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
     setIsLoading(true)
     setError(null)
 
     try {
-      const { data: user } = await supabase.auth.getUser()
-      if (!user.user) throw new Error("Not authenticated")
-
-      const { error } = await supabase
-        .from("clothing_listings")
-        .update({
+      const res = await fetch(`/api/listings/${params.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
           title: formData.title,
           description: formData.description || null,
           clothing_type: formData.clothing_type,
-          quantity: Number.parseInt(formData.quantity) || 1,
+          quantity: parseInt(formData.quantity) || 1,
           condition: formData.condition,
           size_range: formData.size_range || null,
           pickup_instructions: formData.pickup_instructions || null,
           available: formData.available,
-        })
-        .eq("id", params.id)
-        .eq("apartment_id", user.user.id)
-
-      if (error) throw error
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to update listing")
 
       router.push(`/dashboard/apartment/listings/${params.id}`)
     } catch (error: unknown) {
@@ -115,21 +99,15 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
       return
     }
 
-    const supabase = createClient()
     setIsDeleting(true)
     setError(null)
 
     try {
-      const { data: user } = await supabase.auth.getUser()
-      if (!user.user) throw new Error("Not authenticated")
-
-      const { error } = await supabase
-        .from("clothing_listings")
-        .delete()
-        .eq("id", params.id)
-        .eq("apartment_id", user.user.id)
-
-      if (error) throw error
+      const res = await fetch(`/api/listings/${params.id}`, {
+        method: "DELETE",
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || "Failed to delete listing")
 
       router.push("/dashboard/apartment/listings")
     } catch (error: unknown) {
