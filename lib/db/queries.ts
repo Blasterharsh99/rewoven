@@ -1,5 +1,5 @@
 import { query, queryOne } from "./index"
-import { v4 as uuidv4 } from "uuid"
+
 
 // ─────────────────────────────────────────────
 // TYPES
@@ -99,10 +99,9 @@ export async function createUser(
   email: string,
   passwordHash: string
 ): Promise<DbUser> {
-  const id = uuidv4()
   const rows = await query<DbUser>(
-    "INSERT INTO users (id, email, password_hash) VALUES ($1, $2, $3) RETURNING *",
-    [id, email.toLowerCase(), passwordHash]
+    "INSERT INTO users (id, email, password_hash) VALUES (gen_random_uuid(), $1, $2) RETURNING *",
+    [email.toLowerCase(), passwordHash]
   )
   return rows[0]
 }
