@@ -126,12 +126,12 @@ export default function HomePage() {
           <div className="text-center">
             <div className="relative w-32 h-32 mx-auto mb-4">
               <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="50" stroke="#d1fae5" strokeWidth="8" fill="none" />
+                <circle cx="60" cy="60" r="50" stroke="#e0f2fe" strokeWidth="8" fill="none" />
                 <circle
                   cx="60"
                   cy="60"
                   r="50"
-                  stroke="#059669"
+                  stroke="#0284c7"
                   strokeWidth="8"
                   fill="none"
                   strokeDasharray="314"
@@ -153,12 +153,12 @@ export default function HomePage() {
           <div className="text-center">
             <div className="relative w-32 h-32 mx-auto mb-4">
               <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="50" stroke="#d1fae5" strokeWidth="8" fill="none" />
+                <circle cx="60" cy="60" r="50" stroke="#e0f2fe" strokeWidth="8" fill="none" />
                 <circle
                   cx="60"
                   cy="60"
                   r="50"
-                  stroke="#059669"
+                  stroke="#0284c7"
                   strokeWidth="8"
                   fill="none"
                   strokeDasharray="314"
@@ -180,12 +180,12 @@ export default function HomePage() {
           <div className="text-center">
             <div className="relative w-32 h-32 mx-auto mb-4">
               <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="50" stroke="#d1fae5" strokeWidth="8" fill="none" />
+                <circle cx="60" cy="60" r="50" stroke="#e0f2fe" strokeWidth="8" fill="none" />
                 <circle
                   cx="60"
                   cy="60"
                   r="50"
-                  stroke="#059669"
+                  stroke="#0284c7"
                   strokeWidth="8"
                   fill="none"
                   strokeDasharray="314"
