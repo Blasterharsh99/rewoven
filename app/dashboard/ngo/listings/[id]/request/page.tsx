@@ -88,13 +88,13 @@ export default function RequestDonationPage({ params }: { params: Promise<{ id: 
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven</h1>
           </div>
           <Button variant="outline" asChild>
             <Link href={`/dashboard/ngo/listings/${listingId}`}>
@@ -107,16 +107,16 @@ export default function RequestDonationPage({ params }: { params: Promise<{ id: 
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/80 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-2xl text-emerald-900">Request Donation</CardTitle>
+              <CardTitle className="text-2xl text-sky-900">Request Donation</CardTitle>
               <CardDescription>Send a request to {listing.profiles?.name} for their clothing donation</CardDescription>
             </CardHeader>
             <CardContent>
               {/* Listing Summary */}
-              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-6">
-                <h3 className="font-semibold text-emerald-900 mb-2">{listing.title}</h3>
-                <div className="text-sm text-emerald-700 space-y-1">
+              <div className="bg-sky-50 border border-sky-200 rounded-lg p-4 mb-6">
+                <h3 className="font-semibold text-sky-900 mb-2">{listing.title}</h3>
+                <div className="text-sm text-sky-700 space-y-1">
                   <p>
                     <strong>Type:</strong> {listing.clothing_type}
                   </p>
@@ -147,7 +147,7 @@ export default function RequestDonationPage({ params }: { params: Promise<{ id: 
                       value={formData.requested_quantity}
                       onChange={(e) => handleInputChange("requested_quantity", e.target.value)}
                     />
-                    <p className="text-xs text-emerald-600">Maximum available: {listing.quantity} items</p>
+                    <p className="text-xs text-sky-600">Maximum available: {listing.quantity} items</p>
                   </div>
 
                   <div className="grid gap-2">
@@ -159,7 +159,7 @@ export default function RequestDonationPage({ params }: { params: Promise<{ id: 
                       value={formData.message}
                       onChange={(e) => handleInputChange("message", e.target.value)}
                     />
-                    <p className="text-xs text-emerald-600">
+                    <p className="text-xs text-sky-600">
                       A brief message about your NGO and intended use will help build trust
                     </p>
                   </div>
@@ -167,7 +167,7 @@ export default function RequestDonationPage({ params }: { params: Promise<{ id: 
                   {error && <p className="text-sm text-red-600">{error}</p>}
 
                   <div className="flex gap-4">
-                    <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700" disabled={isLoading}>
+                    <Button type="submit" className="flex-1 bg-sky-600 hover:bg-sky-700" disabled={isLoading}>
                       {isLoading ? "Sending Request..." : "Send Request"}
                     </Button>
                     <Button type="button" variant="outline" asChild>

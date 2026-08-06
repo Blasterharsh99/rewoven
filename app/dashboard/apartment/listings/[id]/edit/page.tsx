@@ -119,23 +119,23 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
 
   if (isLoadingData) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-600 mx-auto mb-4"></div>
-          <p className="text-emerald-700">Loading listing...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-sky-600 mx-auto mb-4"></div>
+          <p className="text-sky-700">Loading listing...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven</h1>
           </div>
           <Button variant="outline" asChild>
             <Link href={`/dashboard/apartment/listings/${params.id}`}>
@@ -148,9 +148,9 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/80 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-2xl text-emerald-900">Edit Clothing Listing</CardTitle>
+              <CardTitle className="text-2xl text-sky-900">Edit Clothing Listing</CardTitle>
               <CardDescription>Update the details of your clothing donation</CardDescription>
             </CardHeader>
             <CardContent>
@@ -260,7 +260,7 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
                   {error && <p className="text-sm text-red-600">{error}</p>}
 
                   <div className="flex gap-4">
-                    <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700" disabled={isLoading}>
+                    <Button type="submit" className="flex-1 bg-sky-600 hover:bg-sky-700" disabled={isLoading}>
                       {isLoading ? "Updating..." : "Update Listing"}
                     </Button>
                     <Button type="button" variant="outline" asChild>

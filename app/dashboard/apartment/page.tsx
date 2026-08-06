@@ -52,16 +52,16 @@ export default async function ApartmentDashboardPage() {
   const pendingRequests = requests?.filter((r) => r.status === "pending").length || 0
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven</h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-emerald-700">Welcome, {profile.contact_person}</span>
+            <span className="text-sm text-sky-700">Welcome, {profile.contact_person}</span>
             <form action="/auth/signout" method="post">
               <Button variant="outline" type="submit">
                 Sign Out
@@ -74,65 +74,65 @@ export default async function ApartmentDashboardPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-emerald-900 mb-2">
+          <h2 className="text-3xl font-bold text-sky-900 mb-2">
             {apartmentDetails?.apartment_name || profile.name} Dashboard
           </h2>
-          <p className="text-emerald-700">Manage your clothing donations and connect with NGOs in need.</p>
+          <p className="text-sky-700">Manage your clothing donations and connect with NGOs in need.</p>
         </div>
 
         {/* Stats Cards */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Total Listings</CardTitle>
-              <Package className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Total Listings</CardTitle>
+              <Package className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-900">{totalListings}</div>
+              <div className="text-2xl font-bold text-sky-900">{totalListings}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Active Listings</CardTitle>
-              <TrendingUp className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Active Listings</CardTitle>
+              <TrendingUp className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-900">{activeListings}</div>
+              <div className="text-2xl font-bold text-sky-900">{activeListings}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Total Requests</CardTitle>
-              <Users className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Total Requests</CardTitle>
+              <Users className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-900">{totalRequests}</div>
+              <div className="text-2xl font-bold text-sky-900">{totalRequests}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Pending Requests</CardTitle>
-              <Users className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Pending Requests</CardTitle>
+              <Users className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-900">{pendingRequests}</div>
+              <div className="text-2xl font-bold text-sky-900">{pendingRequests}</div>
             </CardContent>
           </Card>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Clothing Listings */}
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-emerald-900">Your Clothing Listings</CardTitle>
+                  <CardTitle className="text-sky-900">Your Clothing Listings</CardTitle>
                   <CardDescription>Manage your available clothing donations</CardDescription>
                 </div>
-                <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+                <Button asChild className="bg-sky-600 hover:bg-sky-700">
                   <Link href="/dashboard/apartment/listings/new">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Listing
@@ -146,8 +146,8 @@ export default async function ApartmentDashboardPage() {
                   {listings.slice(0, 5).map((listing) => (
                     <div key={listing.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex-1">
-                        <h4 className="font-medium text-emerald-900">{listing.title}</h4>
-                        <p className="text-sm text-emerald-700">
+                        <h4 className="font-medium text-sky-900">{listing.title}</h4>
+                        <p className="text-sm text-sky-700">
                           {listing.clothing_type} • {listing.quantity} items • {listing.condition}
                         </p>
                       </div>
@@ -169,9 +169,9 @@ export default async function ApartmentDashboardPage() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <Package className="h-12 w-12 text-emerald-300 mx-auto mb-4" />
-                  <p className="text-emerald-600 mb-4">No clothing listings yet</p>
-                  <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+                  <Package className="h-12 w-12 text-sky-300 mx-auto mb-4" />
+                  <p className="text-sky-600 mb-4">No clothing listings yet</p>
+                  <Button asChild className="bg-sky-600 hover:bg-sky-700">
                     <Link href="/dashboard/apartment/listings/new">Create Your First Listing</Link>
                   </Button>
                 </div>
@@ -180,9 +180,9 @@ export default async function ApartmentDashboardPage() {
           </Card>
 
           {/* Recent Requests */}
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-emerald-900">Recent Requests</CardTitle>
+              <CardTitle className="text-sky-900">Recent Requests</CardTitle>
               <CardDescription>NGOs interested in your donations</CardDescription>
             </CardHeader>
             <CardContent>
@@ -191,11 +191,11 @@ export default async function ApartmentDashboardPage() {
                   {requests.slice(0, 5).map((request) => (
                     <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex-1">
-                        <h4 className="font-medium text-emerald-900">{request.profiles?.name}</h4>
-                        <p className="text-sm text-emerald-700">
+                        <h4 className="font-medium text-sky-900">{request.profiles?.name}</h4>
+                        <p className="text-sm text-sky-700">
                           Requested {request.requested_quantity} items from "{request.clothing_listings?.title}"
                         </p>
-                        <p className="text-xs text-emerald-600">{new Date(request.created_at).toLocaleDateString()}</p>
+                        <p className="text-xs text-sky-600">{new Date(request.created_at).toLocaleDateString()}</p>
                       </div>
                       <div className="flex items-center gap-2">
                         <Badge
@@ -223,9 +223,9 @@ export default async function ApartmentDashboardPage() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <Users className="h-12 w-12 text-emerald-300 mx-auto mb-4" />
-                  <p className="text-emerald-600">No requests yet</p>
-                  <p className="text-sm text-emerald-500">NGOs will be able to request your clothing donations</p>
+                  <Users className="h-12 w-12 text-sky-300 mx-auto mb-4" />
+                  <p className="text-sky-600">No requests yet</p>
+                  <p className="text-sm text-sky-500">NGOs will be able to request your clothing donations</p>
                 </div>
               )}
             </CardContent>

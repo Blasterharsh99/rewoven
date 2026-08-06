@@ -45,13 +45,13 @@ export default async function AdminRequestsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven Admin</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven Admin</h1>
           </div>
           <Button variant="outline" asChild>
             <Link href="/dashboard/admin">
@@ -64,8 +64,8 @@ export default async function AdminRequestsPage() {
 
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-emerald-900 mb-2">Request Monitoring</h2>
-          <p className="text-emerald-700">Monitor all donation requests across the platform</p>
+          <h2 className="text-3xl font-bold text-sky-900 mb-2">Request Monitoring</h2>
+          <p className="text-sky-700">Monitor all donation requests across the platform</p>
         </div>
 
         {/* Status Overview */}
@@ -90,13 +90,13 @@ export default async function AdminRequestsPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-200 bg-emerald-50/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-sky-50/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Completed</CardTitle>
-              <TrendingUp className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Completed</CardTitle>
+              <TrendingUp className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-800">{statusCounts.completed}</div>
+              <div className="text-2xl font-bold text-sky-800">{statusCounts.completed}</div>
             </CardContent>
           </Card>
 
@@ -115,11 +115,11 @@ export default async function AdminRequestsPage() {
         {requests && requests.length > 0 ? (
           <div className="space-y-4">
             {requests.map((request) => (
-              <Card key={request.id} className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+              <Card key={request.id} className="border-sky-200 bg-white/60 backdrop-blur-sm">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-emerald-900 text-lg">
+                      <CardTitle className="text-sky-900 text-lg">
                         {request.ngo_contact_person} → {request.apartment_contact_person}
                       </CardTitle>
                       <CardDescription className="mt-1">
@@ -144,43 +144,43 @@ export default async function AdminRequestsPage() {
                 <CardContent>
                   <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <p className="text-emerald-700">
+                      <p className="text-sky-700">
                         <strong>NGO Contact:</strong> {request.ngo_contact_person}
                       </p>
-                      <p className="text-emerald-600">
+                      <p className="text-sky-600">
                         {request.ngo_city}, {request.ngo_state}
                       </p>
                     </div>
                     <div>
-                      <p className="text-emerald-700">
+                      <p className="text-sky-700">
                         <strong>Apartment Contact:</strong> {request.apartment_contact_person}
                       </p>
-                      <p className="text-emerald-600">
+                      <p className="text-sky-600">
                         {request.apartment_city}, {request.apartment_state}
                       </p>
                     </div>
                     <div>
-                      <p className="text-emerald-700 flex items-center gap-1">
+                      <p className="text-sky-700 flex items-center gap-1">
                         <Package className="h-3 w-3" />
                         <strong>Requested:</strong> {request.requested_quantity} items
                       </p>
-                      <p className="text-emerald-600">Type: {request.listing_clothing_type}</p>
+                      <p className="text-sky-600">Type: {request.listing_clothing_type}</p>
                     </div>
                     <div>
-                      <p className="text-emerald-700 flex items-center gap-1">
+                      <p className="text-sky-700 flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         <strong>Date:</strong> {new Date(request.created_at).toLocaleDateString()}
                       </p>
-                      <p className="text-emerald-600">Updated: {new Date(request.updated_at).toLocaleDateString()}</p>
+                      <p className="text-sky-600">Updated: {new Date(request.updated_at).toLocaleDateString()}</p>
                     </div>
                   </div>
 
                   {request.message && (
-                    <div className="mt-4 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
-                      <p className="text-sm text-emerald-700">
+                    <div className="mt-4 bg-sky-50 border border-sky-200 rounded-lg p-3">
+                      <p className="text-sm text-sky-700">
                         <strong>NGO Message:</strong>
                       </p>
-                      <p className="text-emerald-600 mt-1">{request.message}</p>
+                      <p className="text-sky-600 mt-1">{request.message}</p>
                     </div>
                   )}
                 </CardContent>
@@ -188,11 +188,11 @@ export default async function AdminRequestsPage() {
             ))}
           </div>
         ) : (
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardContent className="text-center py-12">
-              <TrendingUp className="h-16 w-16 text-emerald-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-emerald-900 mb-2">No Requests Yet</h3>
-              <p className="text-emerald-600">Donation requests will appear here as NGOs make them.</p>
+              <TrendingUp className="h-16 w-16 text-sky-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-sky-900 mb-2">No Requests Yet</h3>
+              <p className="text-sky-600">Donation requests will appear here as NGOs make them.</p>
             </CardContent>
           </Card>
         )}

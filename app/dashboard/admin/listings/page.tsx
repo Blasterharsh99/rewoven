@@ -79,13 +79,13 @@ export default async function AdminListingsPage({
   const uniqueTypes = typeRows.map((r: any) => r.clothing_type)
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven Admin</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven Admin</h1>
           </div>
           <Button variant="outline" asChild>
             <Link href="/dashboard/admin">
@@ -98,19 +98,19 @@ export default async function AdminListingsPage({
 
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-emerald-900 mb-2">All Listings</h2>
-          <p className="text-emerald-700">View and manage all clothing donations across the platform</p>
+          <h2 className="text-3xl font-bold text-sky-900 mb-2">All Listings</h2>
+          <p className="text-sky-700">View and manage all clothing donations across the platform</p>
         </div>
 
         {/* Statistics */}
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Total Listings</CardTitle>
-              <Package className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Total Listings</CardTitle>
+              <Package className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-900">{totalListings || 0}</div>
+              <div className="text-2xl font-bold text-sky-900">{totalListings || 0}</div>
             </CardContent>
           </Card>
 
@@ -136,9 +136,9 @@ export default async function AdminListingsPage({
         </div>
 
         {/* Filters */}
-        <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm mb-6">
+        <Card className="border-sky-200 bg-white/60 backdrop-blur-sm mb-6">
           <CardHeader>
-            <CardTitle className="text-emerald-900 flex items-center gap-2">
+            <CardTitle className="text-sky-900 flex items-center gap-2">
               <Filter className="h-5 w-5" />
               Filters
             </CardTitle>
@@ -147,18 +147,18 @@ export default async function AdminListingsPage({
             <form method="GET" className="flex flex-wrap gap-4">
               <div className="flex-1 min-w-[200px]">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-emerald-500 h-4 w-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sky-500 h-4 w-4" />
                   <Input
                     name="search"
                     placeholder="Search listings..."
                     defaultValue={searchParams.search}
-                    className="pl-10 border-emerald-200 focus:border-emerald-400"
+                    className="pl-10 border-sky-200 focus:border-sky-400"
                   />
                 </div>
               </div>
 
               <Select name="status" defaultValue={searchParams.status || "all"}>
-                <SelectTrigger className="w-[150px] border-emerald-200">
+                <SelectTrigger className="w-[150px] border-sky-200">
                   <SelectValue placeholder="Status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -169,7 +169,7 @@ export default async function AdminListingsPage({
               </Select>
 
               <Select name="type" defaultValue={searchParams.type || "all"}>
-                <SelectTrigger className="w-[150px] border-emerald-200">
+                <SelectTrigger className="w-[150px] border-sky-200">
                   <SelectValue placeholder="Type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -182,7 +182,7 @@ export default async function AdminListingsPage({
                 </SelectContent>
               </Select>
 
-              <Button type="submit" className="bg-emerald-600 hover:bg-emerald-700">
+              <Button type="submit" className="bg-sky-600 hover:bg-sky-700">
                 Apply Filters
               </Button>
             </form>
@@ -193,11 +193,11 @@ export default async function AdminListingsPage({
         {listings && listings.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {listings.map((listing) => (
-              <Card key={listing.id} className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+              <Card key={listing.id} className="border-sky-200 bg-white/60 backdrop-blur-sm">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-emerald-900 text-lg line-clamp-2">{listing.title}</CardTitle>
+                      <CardTitle className="text-sky-900 text-lg line-clamp-2">{listing.title}</CardTitle>
                       <CardDescription className="mt-1 flex items-center gap-1">
                         <MapPin className="h-3 w-3" />
                         {listing.profiles?.name}
@@ -228,7 +228,7 @@ export default async function AdminListingsPage({
                     )}
 
                     {/* Details */}
-                    <div className="text-sm text-emerald-700">
+                    <div className="text-sm text-sky-700">
                       <div className="flex items-center gap-1 mb-1">
                         <Package className="h-3 w-3" />
                         <span className="font-medium">Type:</span> {listing.clothing_type}
@@ -244,18 +244,18 @@ export default async function AdminListingsPage({
 
                     {/* Description */}
                     {listing.description && (
-                      <div className="text-xs text-emerald-600 bg-emerald-50 p-2 rounded line-clamp-3">
+                      <div className="text-xs text-sky-600 bg-sky-50 p-2 rounded line-clamp-3">
                         {listing.description}
                       </div>
                     )}
 
                     {/* Location */}
-                    <div className="text-xs text-emerald-500">
+                    <div className="text-xs text-sky-500">
                       <strong>Location:</strong> {listing.profiles?.city}, {listing.profiles?.state}
                     </div>
 
                     {/* Date */}
-                    <div className="text-xs text-emerald-600 border-t pt-2">
+                    <div className="text-xs text-sky-600 border-t pt-2">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         Posted: {new Date(listing.created_at).toLocaleDateString()}
@@ -267,11 +267,11 @@ export default async function AdminListingsPage({
             ))}
           </div>
         ) : (
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardContent className="text-center py-12">
-              <Package className="h-16 w-16 text-emerald-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-emerald-900 mb-2">No Listings Found</h3>
-              <p className="text-emerald-600">
+              <Package className="h-16 w-16 text-sky-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-sky-900 mb-2">No Listings Found</h3>
+              <p className="text-sky-600">
                 {searchParams.search || searchParams.status || searchParams.type
                   ? "Try adjusting your filters to see more results."
                   : "Clothing listings will appear here once apartments start posting donations."}

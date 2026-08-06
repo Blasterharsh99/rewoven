@@ -78,16 +78,16 @@ export default async function AdminDashboardPage() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven Admin</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven Admin</h1>
           </div>
           <div className="flex items-center gap-4">
-            <span className="text-sm text-emerald-700">Welcome, Admin</span>
+            <span className="text-sm text-sky-700">Welcome, Admin</span>
             <form action="/auth/signout" method="post">
               <Button variant="outline" type="submit">
                 Sign Out
@@ -100,60 +100,60 @@ export default async function AdminDashboardPage() {
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-emerald-900 mb-2">Admin Dashboard</h2>
-          <p className="text-emerald-700">Monitor platform activity and manage the Rewoven community.</p>
+          <h2 className="text-3xl font-bold text-sky-900 mb-2">Admin Dashboard</h2>
+          <p className="text-sky-700">Monitor platform activity and manage the Rewoven community.</p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Total Apartments</CardTitle>
-              <Building2 className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Total Apartments</CardTitle>
+              <Building2 className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-900">{totalApartments || 0}</div>
+              <div className="text-2xl font-bold text-sky-900">{totalApartments || 0}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Total NGOs</CardTitle>
-              <Users className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Total NGOs</CardTitle>
+              <Users className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-900">{totalNGOs || 0}</div>
+              <div className="text-2xl font-bold text-sky-900">{totalNGOs || 0}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Total Listings</CardTitle>
-              <Package className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Total Listings</CardTitle>
+              <Package className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-900">{totalListings || 0}</div>
-              <p className="text-xs text-emerald-600">{activeListings || 0} active</p>
+              <div className="text-2xl font-bold text-sky-900">{totalListings || 0}</div>
+              <p className="text-xs text-sky-600">{activeListings || 0} active</p>
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Total Requests</CardTitle>
-              <TrendingUp className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Total Requests</CardTitle>
+              <TrendingUp className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-900">{totalRequests || 0}</div>
-              <p className="text-xs text-emerald-600">{pendingRequests || 0} pending</p>
+              <div className="text-2xl font-bold text-sky-900">{totalRequests || 0}</div>
+              <p className="text-xs text-sky-600">{pendingRequests || 0} pending</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Request Status Overview */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Pending Requests</CardTitle>
+              <CardTitle className="text-sm font-medium text-sky-700">Pending Requests</CardTitle>
               <Activity className="h-4 w-4 text-yellow-600" />
             </CardHeader>
             <CardContent>
@@ -161,9 +161,9 @@ export default async function AdminDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Approved Requests</CardTitle>
+              <CardTitle className="text-sm font-medium text-sky-700">Approved Requests</CardTitle>
               <CheckCircle className="h-4 w-4 text-blue-600" />
             </CardHeader>
             <CardContent>
@@ -171,48 +171,48 @@ export default async function AdminDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Completed Requests</CardTitle>
-              <CheckCircle className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Completed Requests</CardTitle>
+              <CheckCircle className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-900">{completedRequests || 0}</div>
+              <div className="text-2xl font-bold text-sky-900">{completedRequests || 0}</div>
             </CardContent>
           </Card>
 
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-emerald-700">Total Messages</CardTitle>
-              <MessageCircle className="h-4 w-4 text-emerald-600" />
+              <CardTitle className="text-sm font-medium text-sky-700">Total Messages</CardTitle>
+              <MessageCircle className="h-4 w-4 text-sky-600" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-emerald-900">{totalMessages || 0}</div>
+              <div className="text-2xl font-bold text-sky-900">{totalMessages || 0}</div>
             </CardContent>
           </Card>
         </div>
 
         {/* Quick Actions */}
         <div className="grid md:grid-cols-4 gap-4 mb-8">
-          <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+          <Button asChild className="bg-sky-600 hover:bg-sky-700">
             <Link href="/dashboard/admin/apartments">Manage Apartments</Link>
           </Button>
-          <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+          <Button asChild className="bg-sky-600 hover:bg-sky-700">
             <Link href="/dashboard/admin/ngos">Manage NGOs</Link>
           </Button>
-          <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+          <Button asChild className="bg-sky-600 hover:bg-sky-700">
             <Link href="/dashboard/admin/listings">View All Listings</Link>
           </Button>
-          <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+          <Button asChild className="bg-sky-600 hover:bg-sky-700">
             <Link href="/dashboard/admin/requests">Monitor Requests</Link>
           </Button>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Recent Listings */}
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-emerald-900">Recent Listings</CardTitle>
+              <CardTitle className="text-sky-900">Recent Listings</CardTitle>
               <CardDescription>Latest clothing donations posted</CardDescription>
             </CardHeader>
             <CardContent>
@@ -221,11 +221,11 @@ export default async function AdminDashboardPage() {
                   {recentListings.map((listing) => (
                     <div key={listing.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex-1">
-                        <h4 className="font-medium text-emerald-900">{listing.title}</h4>
-                        <p className="text-sm text-emerald-700">
+                        <h4 className="font-medium text-sky-900">{listing.title}</h4>
+                        <p className="text-sm text-sky-700">
                           {listing.profiles?.name} • {listing.profiles?.city}, {listing.profiles?.state}
                         </p>
-                        <p className="text-xs text-emerald-600">
+                        <p className="text-xs text-sky-600">
                           {listing.clothing_type} • {listing.quantity} items
                         </p>
                       </div>
@@ -233,7 +233,7 @@ export default async function AdminDashboardPage() {
                         <Badge variant={listing.available ? "default" : "secondary"}>
                           {listing.available ? "Available" : "Unavailable"}
                         </Badge>
-                        <span className="text-xs text-emerald-500">
+                        <span className="text-xs text-sky-500">
                           {new Date(listing.created_at).toLocaleDateString()}
                         </span>
                       </div>
@@ -241,15 +241,15 @@ export default async function AdminDashboardPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-emerald-600 text-center py-4">No recent listings</p>
+                <p className="text-sky-600 text-center py-4">No recent listings</p>
               )}
             </CardContent>
           </Card>
 
           {/* Recent Requests */}
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-emerald-900">Recent Requests</CardTitle>
+              <CardTitle className="text-sky-900">Recent Requests</CardTitle>
               <CardDescription>Latest donation requests from NGOs</CardDescription>
             </CardHeader>
             <CardContent>
@@ -258,9 +258,9 @@ export default async function AdminDashboardPage() {
                   {recentRequests.map((request) => (
                     <div key={request.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex-1">
-                        <h4 className="font-medium text-emerald-900">{request.ngo_name}</h4>
-                        <p className="text-sm text-emerald-700">"{request.message}"</p>
-                        <p className="text-xs text-emerald-600">
+                        <h4 className="font-medium text-sky-900">{request.ngo_name}</h4>
+                        <p className="text-sm text-sky-700">"{request.message}"</p>
+                        <p className="text-xs text-sky-600">
                           {request.requested_quantity} items • {new Date(request.created_at).toLocaleDateString()}
                         </p>
                       </div>
@@ -281,7 +281,7 @@ export default async function AdminDashboardPage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-emerald-600 text-center py-4">No recent requests</p>
+                <p className="text-sky-600 text-center py-4">No recent requests</p>
               )}
             </CardContent>
           </Card>

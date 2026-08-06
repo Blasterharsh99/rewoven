@@ -34,13 +34,13 @@ export default async function AdminNGOsPage() {
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven Admin</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven Admin</h1>
           </div>
           <Button variant="outline" asChild>
             <Link href="/dashboard/admin">
@@ -53,18 +53,18 @@ export default async function AdminNGOsPage() {
 
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-emerald-900 mb-2">NGO Management</h2>
-          <p className="text-emerald-700">View and manage all registered NGO organizations</p>
+          <h2 className="text-3xl font-bold text-sky-900 mb-2">NGO Management</h2>
+          <p className="text-sky-700">View and manage all registered NGO organizations</p>
         </div>
 
         {ngos && ngos.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {ngos.map((ngo) => (
-              <Card key={ngo.id} className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+              <Card key={ngo.id} className="border-sky-200 bg-white/60 backdrop-blur-sm">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-emerald-900 text-lg">
+                      <CardTitle className="text-sky-900 text-lg">
                         {ngo.ngo_details?.[0]?.ngo_name || ngo.name}
                       </CardTitle>
                       <CardDescription className="mt-1 flex items-center gap-1">
@@ -79,7 +79,7 @@ export default async function AdminNGOsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    <div className="text-sm text-emerald-700">
+                    <div className="text-sm text-sky-700">
                       <div className="flex items-center gap-1 mb-1">
                         <User className="h-3 w-3" />
                         <span className="font-medium">Contact:</span> {ngo.contact_person}
@@ -99,7 +99,7 @@ export default async function AdminNGOsPage() {
                     </div>
 
                     {ngo.ngo_details?.[0]?.focus_areas && (
-                      <div className="text-xs text-emerald-600">
+                      <div className="text-xs text-sky-600">
                         <strong>Focus Areas:</strong>
                         <div className="flex flex-wrap gap-1 mt-1">
                           {ngo.ngo_details[0].focus_areas.slice(0, 3).map((area: string, index: number) => (
@@ -116,32 +116,32 @@ export default async function AdminNGOsPage() {
                       </div>
                     )}
 
-                    <div className="text-xs text-emerald-600 border-t pt-2">
+                    <div className="text-xs text-sky-600 border-t pt-2">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
                         Registered: {new Date(ngo.created_at).toLocaleDateString()}
                       </div>
                     </div>
 
-                    <div className="text-xs text-emerald-500 bg-emerald-50 p-2 rounded">
+                    <div className="text-xs text-sky-500 bg-sky-50 p-2 rounded">
                       <strong>Address:</strong> {ngo.address}
                     </div>
 
                     {ngo.ngo_details?.[0]?.head_office_address && (
-                      <div className="text-xs text-emerald-600">
+                      <div className="text-xs text-sky-600">
                         <strong>Head Office:</strong> {ngo.ngo_details[0].head_office_address}
                       </div>
                     )}
 
                     {ngo.ngo_details?.[0]?.website && (
-                      <div className="text-xs text-emerald-600">
+                      <div className="text-xs text-sky-600">
                         <div className="flex items-center gap-1">
                           <Globe className="h-3 w-3" />
                           <a
                             href={ngo.ngo_details[0].website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-emerald-600 hover:text-emerald-700 underline"
+                            className="text-sky-600 hover:text-sky-700 underline"
                           >
                             Website
                           </a>
@@ -154,11 +154,11 @@ export default async function AdminNGOsPage() {
             ))}
           </div>
         ) : (
-          <Card className="border-emerald-200 bg-white/60 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/60 backdrop-blur-sm">
             <CardContent className="text-center py-12">
-              <Users className="h-16 w-16 text-emerald-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-emerald-900 mb-2">No NGOs Registered</h3>
-              <p className="text-emerald-600">NGO organizations will appear here once they sign up.</p>
+              <Users className="h-16 w-16 text-sky-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-sky-900 mb-2">No NGOs Registered</h3>
+              <p className="text-sky-600">NGO organizations will appear here once they sign up.</p>
             </CardContent>
           </Card>
         )}

@@ -62,13 +62,13 @@ export default function NewListingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven</h1>
           </div>
           <Button variant="outline" asChild>
             <Link href="/dashboard/apartment">
@@ -81,9 +81,9 @@ export default function NewListingPage() {
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/80 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-2xl text-emerald-900">Create New Clothing Listing</CardTitle>
+              <CardTitle className="text-2xl text-sky-900">Create New Clothing Listing</CardTitle>
               <CardDescription>Add details about the clothing items you want to donate</CardDescription>
             </CardHeader>
             <CardContent>
@@ -184,7 +184,7 @@ export default function NewListingPage() {
                   {error && <p className="text-sm text-red-600">{error}</p>}
 
                   <div className="flex gap-4">
-                    <Button type="submit" className="flex-1 bg-emerald-600 hover:bg-emerald-700" disabled={isLoading}>
+                    <Button type="submit" className="flex-1 bg-sky-600 hover:bg-sky-700" disabled={isLoading}>
                       {isLoading ? "Creating..." : "Create Listing"}
                     </Button>
                     <Button type="button" variant="outline" asChild>

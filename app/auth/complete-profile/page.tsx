@@ -136,18 +136,18 @@ export default function CompleteProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50 flex items-center justify-center p-6">
       <div className="w-full max-w-2xl">
         <div className="flex flex-col gap-6">
           {/* Logo */}
           <div className="flex items-center justify-center gap-2 mb-4">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven</h1>
           </div>
 
-          <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/80 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-2xl text-emerald-900">Complete Your Profile</CardTitle>
+              <CardTitle className="text-2xl text-sky-900">Complete Your Profile</CardTitle>
               <CardDescription>Please complete your profile information to continue</CardDescription>
             </CardHeader>
             <CardContent>
@@ -314,7 +314,7 @@ export default function CompleteProfilePage() {
 
                   {error && <p className="text-sm text-red-600">{error}</p>}
 
-                  <Button type="submit" className="w-full bg-emerald-600 hover:bg-emerald-700" disabled={isLoading}>
+                  <Button type="submit" className="w-full bg-sky-600 hover:bg-sky-700" disabled={isLoading}>
                     {isLoading ? "Completing profile..." : "Complete Profile"}
                   </Button>
                 </div>

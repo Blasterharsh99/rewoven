@@ -35,13 +35,13 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven</h1>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" asChild>
@@ -50,7 +50,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                 Back to Listings
               </Link>
             </Button>
-            <Button asChild className="bg-emerald-600 hover:bg-emerald-700">
+            <Button asChild className="bg-sky-600 hover:bg-sky-700">
               <Link href={`/dashboard/apartment/listings/${listing.id}/edit`}>
                 <Edit className="h-4 w-4 mr-2" />
                 Edit Listing
@@ -63,11 +63,11 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Main Listing Details */}
-          <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <CardTitle className="text-2xl text-emerald-900 mb-2">{listing.title}</CardTitle>
+                  <CardTitle className="text-2xl text-sky-900 mb-2">{listing.title}</CardTitle>
                   <CardDescription className="text-lg">
                     {listing.clothing_type} • {listing.quantity} items
                   </CardDescription>
@@ -80,7 +80,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
             <CardContent>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-emerald-700">
+                  <div className="flex items-center gap-2 text-sky-700">
                     <Package className="h-5 w-5" />
                     <div>
                       <p className="font-medium">Condition</p>
@@ -89,7 +89,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                   </div>
 
                   {listing.size_range && (
-                    <div className="flex items-center gap-2 text-emerald-700">
+                    <div className="flex items-center gap-2 text-sky-700">
                       <User className="h-5 w-5" />
                       <div>
                         <p className="font-medium">Size Range</p>
@@ -98,7 +98,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                     </div>
                   )}
 
-                  <div className="flex items-center gap-2 text-emerald-700">
+                  <div className="flex items-center gap-2 text-sky-700">
                     <Calendar className="h-5 w-5" />
                     <div>
                       <p className="font-medium">Created</p>
@@ -110,15 +110,15 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                 <div className="space-y-4">
                   {listing.description && (
                     <div>
-                      <p className="font-medium text-emerald-900 mb-2">Description</p>
-                      <p className="text-emerald-700 text-sm leading-relaxed">{listing.description}</p>
+                      <p className="font-medium text-sky-900 mb-2">Description</p>
+                      <p className="text-sky-700 text-sm leading-relaxed">{listing.description}</p>
                     </div>
                   )}
 
                   {listing.pickup_instructions && (
                     <div>
-                      <p className="font-medium text-emerald-900 mb-2">Pickup Instructions</p>
-                      <p className="text-emerald-700 text-sm leading-relaxed">{listing.pickup_instructions}</p>
+                      <p className="font-medium text-sky-900 mb-2">Pickup Instructions</p>
+                      <p className="text-sky-700 text-sm leading-relaxed">{listing.pickup_instructions}</p>
                     </div>
                   )}
                 </div>
@@ -127,22 +127,22 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
           </Card>
 
           {/* Requests Section */}
-          <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/80 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-xl text-emerald-900">Requests ({requests?.length || 0})</CardTitle>
+              <CardTitle className="text-xl text-sky-900">Requests ({requests?.length || 0})</CardTitle>
               <CardDescription>NGOs that have requested this clothing donation</CardDescription>
             </CardHeader>
             <CardContent>
               {requests && requests.length > 0 ? (
                 <div className="space-y-4">
                   {requests.map((request) => (
-                    <div key={request.id} className="border border-emerald-100 rounded-lg p-4 bg-emerald-50/50">
+                    <div key={request.id} className="border border-sky-100 rounded-lg p-4 bg-sky-50/50">
                       <div className="flex items-start justify-between mb-3">
                         <div>
-                          <h4 className="font-medium text-emerald-900">
+                          <h4 className="font-medium text-sky-900">
                             {request.profiles?.organization_name || request.profiles?.full_name}
                           </h4>
-                          <p className="text-sm text-emerald-600">
+                          <p className="text-sm text-sky-600">
                             Requested on {new Date(request.created_at).toLocaleDateString()}
                           </p>
                         </div>
@@ -159,7 +159,7 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                         </Badge>
                       </div>
 
-                      {request.message && <p className="text-sm text-emerald-700 mb-3">{request.message}</p>}
+                      {request.message && <p className="text-sm text-sky-700 mb-3">{request.message}</p>}
 
                       <div className="flex gap-2">
                         <Button size="sm" asChild>
@@ -171,9 +171,9 @@ export default async function ListingDetailPage({ params }: { params: { id: stri
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <Package className="h-12 w-12 text-emerald-300 mx-auto mb-3" />
-                  <p className="text-emerald-600">No requests yet for this listing</p>
-                  <p className="text-sm text-emerald-500 mt-1">
+                  <Package className="h-12 w-12 text-sky-300 mx-auto mb-3" />
+                  <p className="text-sky-600">No requests yet for this listing</p>
+                  <p className="text-sm text-sky-500 mt-1">
                     NGOs will be able to request these items once they discover your listing
                   </p>
                 </div>

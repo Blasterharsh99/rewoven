@@ -47,13 +47,13 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
   )
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven</h1>
           </div>
           <Button variant="outline" asChild>
             <Link href="/dashboard/ngo/browse">
@@ -69,12 +69,12 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="lg:col-span-2">
-              <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
+              <Card className="border-sky-200 bg-white/80 backdrop-blur-sm">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-2xl text-emerald-900 mb-2">{listing.title}</CardTitle>
-                      <div className="flex items-center gap-4 text-sm text-emerald-700">
+                      <CardTitle className="text-2xl text-sky-900 mb-2">{listing.title}</CardTitle>
+                      <div className="flex items-center gap-4 text-sm text-sky-700">
                         <span className="flex items-center gap-1">
                           <Package className="h-4 w-4" />
                           {listing.clothing_type}
@@ -92,21 +92,21 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
                   <div className="space-y-6">
                     {listing.description && (
                       <div>
-                        <h3 className="font-semibold text-emerald-900 mb-2">Description</h3>
-                        <p className="text-emerald-700">{listing.description}</p>
+                        <h3 className="font-semibold text-sky-900 mb-2">Description</h3>
+                        <p className="text-sky-700">{listing.description}</p>
                       </div>
                     )}
 
                     <div className="grid md:grid-cols-2 gap-4">
                       {listing.size_range && (
                         <div>
-                          <h4 className="font-medium text-emerald-900">Size Range</h4>
-                          <p className="text-emerald-700">{listing.size_range}</p>
+                          <h4 className="font-medium text-sky-900">Size Range</h4>
+                          <p className="text-sky-700">{listing.size_range}</p>
                         </div>
                       )}
                       <div>
-                        <h4 className="font-medium text-emerald-900">Posted</h4>
-                        <p className="text-emerald-700 flex items-center gap-1">
+                        <h4 className="font-medium text-sky-900">Posted</h4>
+                        <p className="text-sky-700 flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
                           {new Date(listing.created_at).toLocaleDateString()}
                         </p>
@@ -115,8 +115,8 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
 
                     {listing.pickup_instructions && (
                       <div>
-                        <h3 className="font-semibold text-emerald-900 mb-2">Pickup Instructions</h3>
-                        <p className="text-emerald-700 bg-emerald-50 p-3 rounded-lg">{listing.pickup_instructions}</p>
+                        <h3 className="font-semibold text-sky-900 mb-2">Pickup Instructions</h3>
+                        <p className="text-sky-700 bg-sky-50 p-3 rounded-lg">{listing.pickup_instructions}</p>
                       </div>
                     )}
 
@@ -156,39 +156,39 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Apartment Info */}
-              <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
+              <Card className="border-sky-200 bg-white/80 backdrop-blur-sm">
                 <CardHeader>
-                  <CardTitle className="text-emerald-900">Apartment Details</CardTitle>
+                  <CardTitle className="text-sky-900">Apartment Details</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
                     <div>
-                      <h4 className="font-medium text-emerald-900">Apartment</h4>
-                      <p className="text-emerald-700">{listing.apartment_details?.apartment_name}</p>
+                      <h4 className="font-medium text-sky-900">Apartment</h4>
+                      <p className="text-sky-700">{listing.apartment_details?.apartment_name}</p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-emerald-900 flex items-center gap-1">
+                      <h4 className="font-medium text-sky-900 flex items-center gap-1">
                         <MapPin className="h-4 w-4" />
                         Location
                       </h4>
-                      <p className="text-emerald-700">
+                      <p className="text-sky-700">
                         {listing.profiles?.city}, {listing.profiles?.state}
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-medium text-emerald-900 flex items-center gap-1">
+                      <h4 className="font-medium text-sky-900 flex items-center gap-1">
                         <User className="h-4 w-4" />
                         Contact Person
                       </h4>
-                      <p className="text-emerald-700">{listing.profiles?.contact_person}</p>
+                      <p className="text-sky-700">{listing.profiles?.contact_person}</p>
                     </div>
                     {listing.profiles?.phone && (
                       <div>
-                        <h4 className="font-medium text-emerald-900 flex items-center gap-1">
+                        <h4 className="font-medium text-sky-900 flex items-center gap-1">
                           <Phone className="h-4 w-4" />
                           Phone
                         </h4>
-                        <p className="text-emerald-700">{listing.profiles?.phone}</p>
+                        <p className="text-sky-700">{listing.profiles?.phone}</p>
                       </div>
                     )}
                   </div>
@@ -196,18 +196,18 @@ export default async function ListingDetailsPage({ params }: { params: Promise<{
               </Card>
 
               {/* Action Button */}
-              <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
+              <Card className="border-sky-200 bg-white/80 backdrop-blur-sm">
                 <CardContent className="pt-6">
                   {listing.available ? (
                     existingRequest ? (
                       <div className="text-center">
-                        <p className="text-sm text-emerald-600 mb-3">You have already requested this donation</p>
+                        <p className="text-sm text-sky-600 mb-3">You have already requested this donation</p>
                         <Button variant="outline" asChild className="w-full bg-transparent">
                           <Link href={`/dashboard/ngo/requests/${existingRequest.id}`}>View Request</Link>
                         </Button>
                       </div>
                     ) : (
-                      <Button asChild className="w-full bg-emerald-600 hover:bg-emerald-700">
+                      <Button asChild className="w-full bg-sky-600 hover:bg-sky-700">
                         <Link href={`/dashboard/ngo/listings/${listing.id}/request`}>Request This Donation</Link>
                       </Button>
                     )

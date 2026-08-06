@@ -109,13 +109,13 @@ export default function NGOMessagesPage({ params }: { params: Promise<{ id: stri
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50">
       {/* Header */}
       <header className="border-b bg-white/80 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Heart className="h-8 w-8 text-emerald-600" />
-            <h1 className="text-2xl font-bold text-emerald-900">Rewoven</h1>
+            <img src="/rewoven-logo.jpeg" alt="Rewoven Logo" className="h-12 w-12 rounded-full object-cover" />
+            <h1 className="text-2xl font-bold text-sky-900">Rewoven</h1>
           </div>
           <Button variant="outline" asChild>
             <Link href={`/dashboard/ngo/requests/${requestId}`}>
@@ -128,15 +128,15 @@ export default function NGOMessagesPage({ params }: { params: Promise<{ id: stri
 
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          <Card className="border-emerald-200 bg-white/80 backdrop-blur-sm">
+          <Card className="border-sky-200 bg-white/80 backdrop-blur-sm">
             <CardHeader>
-              <CardTitle className="text-emerald-900">
+              <CardTitle className="text-sky-900">
                 Messages with {request.profiles?.name} - {request.clothing_listings?.title}
               </CardTitle>
             </CardHeader>
             <CardContent>
               {/* Messages */}
-              <div className="h-96 overflow-y-auto mb-4 space-y-4 p-4 bg-emerald-50 rounded-lg">
+              <div className="h-96 overflow-y-auto mb-4 space-y-4 p-4 bg-sky-50 rounded-lg">
                 {messages.length > 0 ? (
                   messages.map((message) => (
                     <div
@@ -146,14 +146,14 @@ export default function NGOMessagesPage({ params }: { params: Promise<{ id: stri
                       <div
                         className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                           message.sender_id === currentUser.id
-                            ? "bg-emerald-600 text-white"
-                            : "bg-white text-emerald-900 border border-emerald-200"
+                            ? "bg-sky-600 text-white"
+                            : "bg-white text-sky-900 border border-sky-200"
                         }`}
                       >
                         <p className="text-sm">{message.message}</p>
                         <p
                           className={`text-xs mt-1 ${
-                            message.sender_id === currentUser.id ? "text-emerald-100" : "text-emerald-500"
+                            message.sender_id === currentUser.id ? "text-sky-100" : "text-sky-500"
                           }`}
                         >
                           {message.profiles?.contact_person} •{" "}
@@ -166,7 +166,7 @@ export default function NGOMessagesPage({ params }: { params: Promise<{ id: stri
                     </div>
                   ))
                 ) : (
-                  <div className="text-center text-emerald-600 py-8">
+                  <div className="text-center text-sky-600 py-8">
                     <p>No messages yet. Start the conversation!</p>
                   </div>
                 )}
@@ -185,7 +185,7 @@ export default function NGOMessagesPage({ params }: { params: Promise<{ id: stri
                 <Button
                   type="submit"
                   disabled={isLoading || !newMessage.trim()}
-                  className="bg-emerald-600 hover:bg-emerald-700"
+                  className="bg-sky-600 hover:bg-sky-700"
                 >
                   <Send className="h-4 w-4" />
                 </Button>

@@ -5,10 +5,10 @@ import Link from "next/link"
 
 export default function SetupGuidePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-teal-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-blue-50 p-4">
       <div className="max-w-4xl mx-auto py-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-emerald-800 mb-2">Rewoven Platform Setup Guide</h1>
+          <h1 className="text-3xl font-bold text-sky-800 mb-2">Rewoven Platform Setup Guide</h1>
           <p className="text-gray-600">Follow these steps to get your Rewoven NGO platform running</p>
         </div>
 
@@ -16,7 +16,7 @@ export default function SetupGuidePage() {
           {/* Environment Variables */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-emerald-700">1. Environment Variables Setup</CardTitle>
+              <CardTitle className="text-sky-700">1. Environment Variables Setup</CardTitle>
               <CardDescription>Configure the required environment variables in your Vercel project</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -61,7 +61,7 @@ export default function SetupGuidePage() {
           {/* Database Setup */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-emerald-700">2. Database Setup</CardTitle>
+              <CardTitle className="text-sky-700">2. Database Setup</CardTitle>
               <CardDescription>Run the database scripts to create tables and functions</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -90,7 +90,7 @@ export default function SetupGuidePage() {
           {/* Admin User */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-emerald-700">3. Admin User Creation</CardTitle>
+              <CardTitle className="text-sky-700">3. Admin User Creation</CardTitle>
               <CardDescription>Create the initial admin user to manage the platform</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -116,7 +116,7 @@ export default function SetupGuidePage() {
                   <strong>Option 2: Use Setup Page</strong>
                 </p>
                 <Link href="/auth/admin-setup">
-                  <Button className="bg-emerald-600 hover:bg-emerald-700">Go to Admin Setup Page</Button>
+                  <Button className="bg-sky-600 hover:bg-sky-700">Go to Admin Setup Page</Button>
                 </Link>
               </div>
             </CardContent>
@@ -125,7 +125,7 @@ export default function SetupGuidePage() {
           {/* Testing */}
           <Card>
             <CardHeader>
-              <CardTitle className="text-emerald-700">4. Test the Platform</CardTitle>
+              <CardTitle className="text-sky-700">4. Test the Platform</CardTitle>
               <CardDescription>Verify everything is working correctly</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
